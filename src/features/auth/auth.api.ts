@@ -1,11 +1,7 @@
 import { instance } from "common/api/common.api";
 
 export const authApi = {
-  register() {
-    const payload = {
-      email: "2Boyko@mail.ru",
-      password: "1qazxcvBG",
-    };
+  register(payload: ArgRegisterType) {
     return instance.post<RegisterResponseType>("auth/register", payload);
   },
   login(payload: ArgLoginType) {

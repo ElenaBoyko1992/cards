@@ -22,6 +22,7 @@
 .authWindow form {
     display: flex;
     flex-direction: column;
+    width: 347px;
 }
 
 .checkbox {
@@ -41,7 +42,7 @@
     font-size: 14px;
 }
 
-.dontHaveAccount {
+.haveAccount {
     margin-bottom: 11px;
     text-align: center;
     font-size: 14px;
@@ -55,3 +56,4 @@
     font-size: 14px;
     color: #ff0000ff;
 }
+

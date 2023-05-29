@@ -3,7 +3,7 @@ import { ArgLoginType, ArgRegisterType, authApi, ProfileType } from "features/au
 import { createAppAsyncThunk } from "common/utils/create-app-async-thunk";
 
 const register = createAppAsyncThunk<void, ArgRegisterType>("auth/register", (arg, thunkAPI) => {
-  authApi.register().then((res) => {
+  authApi.register(arg).then((res) => {
     console.log(res);
   });
 });

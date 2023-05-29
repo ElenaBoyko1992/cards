@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAppDispatch } from "app/hooks";
 import { authThunks } from "features/auth/auth.slice";
-import s from "features/auth/login/Login.module.css";
+import s from "features/auth/login/Auth.module.css";
 import {
   Button,
   FormControl,
@@ -94,7 +94,7 @@ export const Login = () => {
             <Button variant="contained" type="submit" style={{ borderRadius: "30px", marginBottom: "30px" }}>
               Sign In
             </Button>
-            <div className={s.dontHaveAccount}>Don`t have an account?</div>
+            <div className={s.haveAccount}>Don`t have an account?</div>
             <NavLink to={"/register"} className={s.registerLink}>
               Sign Up
             </NavLink>
