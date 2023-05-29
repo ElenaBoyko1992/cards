@@ -2,5 +2,56 @@
     /*display: flex;*/
     /*align-items: center;*/
     /*gap: 10px;*/
-    /*min-height: 100vh;*/
+    min-height: 100vh;
+
+}
+
+.container h1 {
+    font-size: 26px;
+    font-weight: 600;
+
+}
+
+.authWindow {
+    padding: 35px 33px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.authWindow form {
+    display: flex;
+    flex-direction: column;
+}
+
+.checkbox {
+    margin: 12px 0 29px;
+    font-size: 14px;
+}
+
+.checkbox input {
+    margin-right: 12px;
+}
+
+.forgotPassword {
+    margin-bottom: 69px;
+    text-align: right;
+    text-decoration: none;
+    color: #000000;
+    font-size: 14px;
+}
+
+.dontHaveAccount {
+    margin-bottom: 11px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.registerLink {
+    text-align: center;
+}
+
+.formError {
+    font-size: 14px;
+    color: #ff0000ff;
 }
