@@ -1,3 +1,3 @@
 остановилась на:
 
-Проверить компоненту register.tsx
+реализовать /auth/set-new-password

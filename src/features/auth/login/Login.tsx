@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useAppDispatch } from "app/hooks";
+import React, { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "app/hooks";
 import { authThunks } from "features/auth/auth.slice";
 import s from "features/auth/login/Auth.module.css";
 import {
@@ -14,11 +14,14 @@ import {
   TextField,
 } from "@mui/material";
 import { Field, FormikProvider, useFormik } from "formik";
-import { NavLink } from "react-router-dom";
+import { NavLink, redirect, useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export const Login = () => {
   const dispatch = useAppDispatch();
+
+  const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
+  const navigate = useNavigate();
 
   //code for password field
   const [showPassword, setShowPassword] = useState(false);
@@ -45,11 +48,17 @@ export const Login = () => {
       password: "",
       rememberMe: false,
     },
-    onSubmit: async (values, formikHelpers) => {
+    onSubmit: (values, formikHelpers) => {
       //email: "2Boyko@mail.ru", password: "1qazxcvBG"
-      await dispatch(authThunks.login(values));
+      dispatch(authThunks.login(values));
     },
   });
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      return navigate("/packs");
+    }
+  }, [isLoggedIn]);
 
   return (
     <Grid container justifyContent={"center"} alignItems={"center"} className={s.container}>
@@ -88,7 +97,7 @@ export const Login = () => {
               <Field type="checkbox" name="rememberMe" />
               <span>{`Remember me`}</span>
             </label>
-            <NavLink to={"/forgot"} className={s.forgotPassword}>
+            <NavLink to={"/forgot-password"} className={s.forgotPassword}>
               Forgot Password?
             </NavLink>
             <Button variant="contained" type="submit" style={{ borderRadius: "30px", marginBottom: "30px" }}>

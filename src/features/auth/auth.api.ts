@@ -1,11 +1,24 @@
-import { instance } from "common/api/common.api";
+import { forgotPasswordInstance, instance } from "common/api/common.api";
 
 export const authApi = {
   register(payload: ArgRegisterType) {
     return instance.post<RegisterResponseType>("auth/register", payload);
   },
   login(payload: ArgLoginType) {
-    return instance.post<ProfileType>("/auth/login", payload);
+    return instance.post<ProfileType>("auth/login", payload);
+  },
+  forgotPassword(email: string) {
+    const payload = {
+      email, // кому восстанавливать пароль
+      from: "", //необязательный параметр
+      message: `<div style="background-color: lime; padding: 15px">
+password recovery link: 
+<a href='http://localhost:3000/#/set-new-password/$token$'>
+link</a>
+</div>`,
+    };
+
+    return forgotPasswordInstance.post<ForgotPasswordResponseType>("auth/forgot", payload);
   },
 };
 
@@ -35,4 +48,11 @@ export type ProfileType = {
   __v: number;
   token: string;
   tokenDeathTime: number;
+};
+
+type ForgotPasswordResponseType = {
+  info: string;
+  answer: boolean;
+  html: boolean;
+  success: boolean;
 };

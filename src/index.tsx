@@ -5,9 +5,11 @@ import { store } from "./app/store";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, redirect, RouterProvider } from "react-router-dom";
 import { Register } from "features/auth/register/Register";
 import { Login } from "features/auth/login/Login";
+import { ForgotPassword } from "features/auth/forgotPassword/ForgotPassword";
+import { useAppSelector } from "app/hooks";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +23,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
   },
   {
     path: "/packs",

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useAppDispatch } from "app/hooks";
+import React, { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "app/hooks";
 import { authThunks } from "features/auth/auth.slice";
 import s from "features/auth/login/Auth.module.css";
 import {
@@ -14,11 +14,13 @@ import {
   TextField,
 } from "@mui/material";
 import { Field, FormikProvider, useFormik } from "formik";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export const Register = () => {
   const dispatch = useAppDispatch();
+  const isRegistered = useAppSelector((state) => state.auth.isRegistered);
+  const navigate = useNavigate();
 
   //code for password field
   const [showPassword, setShowPassword] = useState(false);
@@ -62,10 +64,16 @@ export const Register = () => {
       password: "",
       confirmPassword: "",
     },
-    onSubmit: async (values, formikHelpers) => {
+    onSubmit: (values, formikHelpers) => {
       dispatch(authThunks.register(values));
     },
   });
+
+  useEffect(() => {
+    if (isRegistered) {
+      return navigate("/login");
+    }
+  }, [isRegistered]);
 
   return (
     <Grid container justifyContent={"center"} alignItems={"center"} className={s.container}>
