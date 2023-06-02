@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { authThunks } from "features/auth/auth.slice";
-import s from "features/auth/login/Auth.module.css";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { FormikProvider, useFormik } from "formik";
 import {
   Button,
   FormControl,
@@ -13,16 +14,20 @@ import {
   Paper,
   TextField,
 } from "@mui/material";
-import { Field, FormikProvider, useFormik } from "formik";
-import { NavLink, redirect, useNavigate } from "react-router-dom";
+import s from "features/auth/login/Auth.module.css";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-export const Login = () => {
+export const SetNewPassword = () => {
   const dispatch = useAppDispatch();
-
-  const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
+  const passwordWasChanged = useAppSelector((state) => state.auth.passwordWasChanged);
   const navigate = useNavigate();
-
+  const { token } = useParams();
+  const onclickHandler = () => {
+    if (token) {
+      dispatch(authThunks.setNewPassword({ password: "87654321", resetPasswordToken: token }));
+    }
+    console.log(token);
+  };
   //code for password field
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -32,45 +37,38 @@ export const Login = () => {
 
   const formik = useFormik({
     validate: (values) => {
-      if (!values.email) {
-        return {
-          email: "Email is required",
-        };
-      }
       if (!values.password) {
         return {
           password: "Password is required",
         };
+      } else if (values.password.length <= 7) {
+        return {
+          password: "Password must be more than 7 characters",
+        };
       }
     },
     initialValues: {
-      email: "",
       password: "",
-      rememberMe: false,
     },
     onSubmit: (values, formikHelpers) => {
-      //email: "2Boyko@mail.ru", password: "1qazxcvBG"
-      dispatch(authThunks.login(values));
+      if (token) {
+        dispatch(authThunks.setNewPassword({ password: values.password, resetPasswordToken: token }));
+      }
     },
   });
 
   useEffect(() => {
-    if (isLoggedIn) {
-      return navigate("/packs");
+    if (passwordWasChanged) {
+      return navigate("/login");
     }
-  }, [isLoggedIn]);
+  }, [passwordWasChanged]);
 
   return (
     <Grid container justifyContent={"center"} alignItems={"center"} className={s.container}>
       <Paper className={s.authWindow}>
-        <h1>Sign in</h1>
+        <h1>Create new password</h1>
         <FormikProvider value={formik}>
           <form action="" onSubmit={formik.handleSubmit} className={s.form}>
-            <TextField variant="standard" {...formik.getFieldProps("email")} label={"Email"} margin="normal" />
-            {formik.touched.email && formik.errors.email ? (
-              <div className={s.formError}>{formik.errors.email}</div>
-            ) : null}
-
             <FormControl variant="standard" margin={"normal"}>
               <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
               <Input
@@ -93,30 +91,22 @@ export const Login = () => {
             {formik.touched.password && formik.errors.password ? (
               <div className={s.formError}>{formik.errors.password}</div>
             ) : null}
-            <label className={s.checkbox}>
-              <Field type="checkbox" name="rememberMe" />
-              <span>{`Remember me`}</span>
-            </label>
-            <NavLink to={"/forgot-password"} className={s.forgotPassword}>
-              Forgot Password?
-            </NavLink>
+            <div className={s.forgotPasswordInstructionsText}>
+              Create new password and we will send you further instructions to email
+            </div>
             <Button
               variant="contained"
               type="submit"
               style={{
                 borderRadius: "30px",
-                marginBottom: "30px",
+                margin: "42px 0 8px 0",
                 textTransform: "none",
                 fontFamily: `'Montserrat', 'sans-serif'`,
                 fontSize: "16px",
               }}
             >
-              Sign In
+              Create new password
             </Button>
-            <div className={s.haveAccount}>Don`t have an account?</div>
-            <NavLink to={"/register"} className={s.registerLink}>
-              Sign Up
-            </NavLink>
           </form>
         </FormikProvider>
       </Paper>

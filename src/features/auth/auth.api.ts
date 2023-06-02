@@ -2,10 +2,10 @@ import { forgotPasswordInstance, instance } from "common/api/common.api";
 
 export const authApi = {
   register(payload: ArgRegisterType) {
-    return instance.post<RegisterResponseType>("auth/register", payload);
+    return forgotPasswordInstance.post<RegisterResponseType>("auth/register", payload);
   },
   login(payload: ArgLoginType) {
-    return instance.post<ProfileType>("auth/login", payload);
+    return forgotPasswordInstance.post<ProfileType>("auth/login", payload);
   },
   forgotPassword(email: string) {
     const payload = {
@@ -19,6 +19,9 @@ link</a>
     };
 
     return forgotPasswordInstance.post<ForgotPasswordResponseType>("auth/forgot", payload);
+  },
+  setNewPassword(payload: ArgSetNewPasswordType) {
+    return forgotPasswordInstance.post<SetNewPasswordResponseType>("/auth/set-new-password", payload);
   },
 };
 
@@ -55,4 +58,15 @@ type ForgotPasswordResponseType = {
   answer: boolean;
   html: boolean;
   success: boolean;
+  error: string;
+};
+
+export type ArgSetNewPasswordType = {
+  password: string;
+  resetPasswordToken: string;
+};
+
+type SetNewPasswordResponseType = {
+  info: string;
+  error: string;
 };

@@ -132,7 +132,17 @@ export const Register = () => {
               <div className={s.formError}>{formik.errors.confirmPassword}</div>
             ) : null}
 
-            <Button variant="contained" type="submit" style={{ borderRadius: "30px", margin: "60px 0 30px 0" }}>
+            <Button
+              variant="contained"
+              type="submit"
+              style={{
+                borderRadius: "30px",
+                margin: "60px 0 30px 0",
+                textTransform: "none",
+                fontFamily: `'Montserrat', 'sans-serif'`,
+                fontSize: "16px",
+              }}
+            >
               Sign Up
             </Button>
             <div className={s.haveAccount}>Already have an account?</div>
