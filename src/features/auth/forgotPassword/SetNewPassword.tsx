@@ -1,19 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { authThunks } from "features/auth/auth.slice";
-import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FormikProvider, useFormik } from "formik";
-import {
-  Button,
-  FormControl,
-  Grid,
-  IconButton,
-  Input,
-  InputAdornment,
-  InputLabel,
-  Paper,
-  TextField,
-} from "@mui/material";
+import { Button, FormControl, Grid, IconButton, Input, InputAdornment, InputLabel, Paper } from "@mui/material";
 import s from "features/auth/login/Auth.module.css";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
@@ -22,12 +12,7 @@ export const SetNewPassword = () => {
   const passwordWasChanged = useAppSelector((state) => state.auth.passwordWasChanged);
   const navigate = useNavigate();
   const { token } = useParams();
-  const onclickHandler = () => {
-    if (token) {
-      dispatch(authThunks.setNewPassword({ password: "87654321", resetPasswordToken: token }));
-    }
-    console.log(token);
-  };
+
   //code for password field
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);

@@ -12,6 +12,7 @@ import { ForgotPassword } from "features/auth/forgotPassword/ForgotPassword";
 import { useAppSelector } from "app/hooks";
 import { SetNewPassword } from "features/auth/forgotPassword/SetNewPassword";
 import { CheckEmail } from "features/auth/forgotPassword/CheckEmail";
+import { Profile } from "features/profile/Profile";
 
 const router = createHashRouter([
   {
@@ -27,16 +28,16 @@ const router = createHashRouter([
     element: <Register />,
   },
   {
-    path: "/check-email",
-    element: <CheckEmail />,
-  },
-  {
     path: "/forgot-password",
     element: <ForgotPassword />,
   },
   {
     path: "/set-new-password/:token",
     element: <SetNewPassword />,
+  },
+  {
+    path: "/profile",
+    element: <Profile />,
   },
   {
     path: "/packs",

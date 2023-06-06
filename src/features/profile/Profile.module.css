@@ -1,0 +1,49 @@
+.window {
+    padding: 35px 33px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 413px;
+    text-align: center;
+}
+
+h1 {
+    margin: 0 0 30px;
+    font-size: 22px !important;
+}
+
+.profilePhoto {
+    width: 96px;
+    height: 96px;
+    position: relative;
+    margin-bottom: 17px;
+}
+
+.profilePhoto img {
+    width: 100%;
+}
+
+.photoIcon {
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    bottom: 0;
+    left: 35%;
+}
+
+.name {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.name img {
+    width: 17px;
+    padding-left: 10px;
+}
+
+.email {
+    font-size: 14px;
+    font-weight: 400;
+    opacity: 0.5;
+    margin-bottom: 30px;
+}

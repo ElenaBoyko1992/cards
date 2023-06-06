@@ -1,9 +1,5 @@
 .container {
-    /*display: flex;*/
-    /*align-items: center;*/
-    /*gap: 10px;*/
     min-height: 100vh;
-
 }
 
 .container h1 {

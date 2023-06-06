@@ -4,7 +4,7 @@ import s from "features/auth/login/Auth.module.css";
 import icon from "assets/images/checkEmailIcon.png";
 import { NavLink } from "react-router-dom";
 
-export const CheckEmail = (props: any) => {
+export const CheckEmail = (props: { email: string }) => {
   return (
     <Grid container justifyContent={"center"} alignItems={"center"} className={s.container}>
       <Paper className={s.authWindow}>

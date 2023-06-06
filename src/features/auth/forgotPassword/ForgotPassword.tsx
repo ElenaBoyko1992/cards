@@ -1,16 +1,15 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { authThunks } from "features/auth/auth.slice";
 import { FormikProvider, useFormik } from "formik";
 import { Button, Grid, Paper, TextField } from "@mui/material";
 import s from "features/auth/login/Auth.module.css";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { CheckEmail } from "features/auth/forgotPassword/CheckEmail";
 
 export const ForgotPassword = () => {
   const dispatch = useAppDispatch();
   const changePasswordInstructionsWereSend = useAppSelector((state) => state.auth.changePasswordInstructionsWereSend);
-  const navigate = useNavigate();
 
   const formik = useFormik({
     validate: (values) => {

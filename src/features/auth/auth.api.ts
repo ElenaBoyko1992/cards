@@ -2,10 +2,10 @@ import { forgotPasswordInstance, instance } from "common/api/common.api";
 
 export const authApi = {
   register(payload: ArgRegisterType) {
-    return forgotPasswordInstance.post<RegisterResponseType>("auth/register", payload);
+    return instance.post<RegisterResponseType>("auth/register", payload);
   },
   login(payload: ArgLoginType) {
-    return forgotPasswordInstance.post<ProfileType>("auth/login", payload);
+    return instance.post<ProfileType>("auth/login", payload);
   },
   forgotPassword(email: string) {
     const payload = {
