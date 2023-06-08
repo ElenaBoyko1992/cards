@@ -23,6 +23,9 @@ link</a>
   setNewPassword(payload: ArgSetNewPasswordType) {
     return forgotPasswordInstance.post<SetNewPasswordResponseType>("/auth/set-new-password", payload);
   },
+  changeProfileData(payload: ArgChangeProfileData) {
+    return instance.put<ChangeProfileDataResponseType>("/auth/me", payload);
+  },
 };
 
 //types
@@ -69,4 +72,14 @@ export type ArgSetNewPasswordType = {
 type SetNewPasswordResponseType = {
   info: string;
   error: string;
+};
+
+export type ArgChangeProfileData = {
+  name?: string;
+  avatar?: string;
+};
+
+type ChangeProfileDataResponseType = {
+  updatedUser: ProfileType;
+  error?: string;
 };

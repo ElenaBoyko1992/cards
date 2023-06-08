@@ -1,5 +1,5 @@
-import React from "react";
-import { useAppDispatch } from "app/hooks";
+import React, { useState } from "react";
+import { useAppDispatch, useAppSelector } from "app/hooks";
 import style from "features/auth/login/Auth.module.css";
 import s from "features/profile/Profile.module.css";
 import { Button, Grid, Paper } from "@mui/material";
@@ -7,11 +7,22 @@ import defaultAvatar from "assets/images/defaultAvatar.png";
 import photoIcon from "assets/images/photo-camera-photocamera-svgrepo-com.svg";
 import pencilIcon from "assets/images/pencil-line-svgrepo-com.svg";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import { grey } from "@mui/material/colors";
+import { EditableSpan } from "components/EditableSpan";
+import { authThunks } from "features/auth/auth.slice";
 
 export const Profile = () => {
   const dispatch = useAppDispatch();
-
+  const name = useAppSelector((state) => state.auth.profile?.name);
+  // const [editMode, setEditMode] = useState(false);
+  // const enableEditMode = () => {
+  //   setEditMode(true);
+  // };
+  // const disableEditMode = () => {
+  //   setEditMode(false);
+  // };
+  const nameChangeHandler = (name: string) => {
+    dispatch(authThunks.changeProfileData({ name }));
+  };
   return (
     <Grid container justifyContent={"center"} alignItems={"center"} className={style.container}>
       <Paper className={s.window}>
@@ -20,10 +31,8 @@ export const Profile = () => {
           <img src={defaultAvatar} />
           <img src={photoIcon} className={s.photoIcon} />
         </div>
-        <div className={s.name}>
-          <span>Helen</span>
-          <img src={pencilIcon} />
-        </div>
+        {/*<div className={s.name}>{editMode ? <input type="text" /> : <EditableSpan />}</div>*/}
+        <EditableSpan value={name ? name : ""} onChange={nameChangeHandler} />
         <div className={s.email}>bionka@inbox.ru</div>
         <Button
           color="inherit"
