@@ -31,16 +31,6 @@ h1 {
     left: 35%;
 }
 
-.name {
-    font-size: 20px;
-    margin-bottom: 15px;
-}
-
-.name img {
-    width: 17px;
-    padding-left: 10px;
-}
-
 .email {
     font-size: 14px;
     font-weight: 400;

@@ -17,7 +17,7 @@ import { Profile } from "features/profile/Profile";
 const router = createHashRouter([
   {
     path: "/",
-    element: <App />,
+    element: <Profile />,
   },
   {
     path: "/login",
@@ -35,10 +35,10 @@ const router = createHashRouter([
     path: "/set-new-password/:token",
     element: <SetNewPassword />,
   },
-  {
-    path: "/profile",
-    element: <Profile />,
-  },
+  // {
+  //   path: "/profile",
+  //   element: <Profile />,
+  // },
   {
     path: "/packs",
     element: <h1>packs</h1>,

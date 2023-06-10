@@ -1,6 +1,7 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, KeyboardEvent, useState } from "react";
 import { TextField } from "@mui/material";
 import pencilIcon from "assets/images/pencil-line-svgrepo-com.svg";
+import s from "./EditableSpan.module.css";
 
 type EditableSpanPropsType = {
   value: string;
@@ -19,18 +20,35 @@ export const EditableSpan = React.memo(function (props: EditableSpanPropsType) {
     setEditMode(false);
     props.onChange(title);
   };
+  const activateViewModeKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.keyCode === 13) {
+      setEditMode(false);
+      props.onChange(title);
+    }
+  };
   const changeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.currentTarget.value);
   };
 
-  return editMode ? (
-    <TextField value={title} onChange={changeTitle} autoFocus onBlur={activateViewMode} placeholder={title} />
-  ) : (
-    <div>
-      <span>{props.value}</span>
-      <button onClick={activateEditMode}>
-        <img src={pencilIcon} />
-      </button>
+  return (
+    <div className={s.editableSpanWrapper}>
+      {editMode ? (
+        <TextField
+          value={title}
+          onChange={changeTitle}
+          autoFocus
+          onBlur={activateViewMode}
+          placeholder={title}
+          onKeyUp={activateViewModeKeyPress}
+        />
+      ) : (
+        <div>
+          <span className={s.name}>{props.value}</span>
+          <button onClick={activateEditMode} className={s.button}>
+            <img src={pencilIcon} />
+          </button>
+        </div>
+      )}
     </div>
   );
 });

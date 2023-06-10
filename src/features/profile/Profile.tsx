@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import style from "features/auth/login/Auth.module.css";
 import s from "features/profile/Profile.module.css";
@@ -13,6 +13,7 @@ import { authThunks } from "features/auth/auth.slice";
 export const Profile = () => {
   const dispatch = useAppDispatch();
   const name = useAppSelector((state) => state.auth.profile?.name);
+  const mail = useAppSelector((state) => state.auth.profile?.email);
   // const [editMode, setEditMode] = useState(false);
   // const enableEditMode = () => {
   //   setEditMode(true);
@@ -23,6 +24,9 @@ export const Profile = () => {
   const nameChangeHandler = (name: string) => {
     dispatch(authThunks.changeProfileData({ name }));
   };
+  useEffect(() => {
+    dispatch(authThunks.initializeApp());
+  }, []);
   return (
     <Grid container justifyContent={"center"} alignItems={"center"} className={style.container}>
       <Paper className={s.window}>
@@ -31,9 +35,8 @@ export const Profile = () => {
           <img src={defaultAvatar} />
           <img src={photoIcon} className={s.photoIcon} />
         </div>
-        {/*<div className={s.name}>{editMode ? <input type="text" /> : <EditableSpan />}</div>*/}
         <EditableSpan value={name ? name : ""} onChange={nameChangeHandler} />
-        <div className={s.email}>bionka@inbox.ru</div>
+        <div className={s.email}>{mail}</div>
         <Button
           color="inherit"
           variant="outlined"

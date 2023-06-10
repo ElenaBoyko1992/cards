@@ -26,6 +26,9 @@ link</a>
   changeProfileData(payload: ArgChangeProfileData) {
     return instance.put<ChangeProfileDataResponseType>("/auth/me", payload);
   },
+  me() {
+    return instance.post<ProfileType>("/auth/me", {});
+  },
 };
 
 //types
