@@ -30,11 +30,11 @@ const setNewPassword = createAppAsyncThunk<void, ArgSetNewPasswordType>(
   }
 );
 
-const changeProfileData = createAppAsyncThunk<any, ArgChangeProfileData>(
+const changeProfileData = createAppAsyncThunk<{ profile: ProfileType }, ArgChangeProfileData>(
   "auth/changeProfileData",
   async (arg, thunkAPI) => {
     const res = await authApi.changeProfileData(arg);
-    console.log(res);
+    return { profile: res.data.updatedUser };
   }
 );
 
@@ -62,6 +62,9 @@ const slice = createSlice({
       })
       .addCase(setNewPassword.fulfilled, (state, action) => {
         state.passwordWasChanged = true;
+      })
+      .addCase(changeProfileData.fulfilled, (state, action) => {
+        state.profile = action.payload.profile;
       });
   },
 });

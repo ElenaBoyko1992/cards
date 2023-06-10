@@ -42,6 +42,7 @@ export type RegisterResponseType = {
 };
 
 export type ProfileType = {
+  avatar: null | string;
   _id: string;
   email: string;
   rememberMe: boolean;
