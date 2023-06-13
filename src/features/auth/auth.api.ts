@@ -4,9 +4,11 @@ export const authApi = {
   register(payload: ArgRegisterType) {
     return instance.post<RegisterResponseType>("auth/register", payload);
   },
+
   login(payload: ArgLoginType) {
     return instance.post<ProfileType>("auth/login", payload);
   },
+
   forgotPassword(email: string) {
     const payload = {
       email, // кому восстанавливать пароль
@@ -20,14 +22,21 @@ link</a>
 
     return forgotPasswordInstance.post<ForgotPasswordResponseType>("auth/forgot", payload);
   },
+
   setNewPassword(payload: ArgSetNewPasswordType) {
     return forgotPasswordInstance.post<SetNewPasswordResponseType>("/auth/set-new-password", payload);
   },
+
   changeProfileData(payload: ArgChangeProfileData) {
     return instance.put<ChangeProfileDataResponseType>("/auth/me", payload);
   },
+
   me() {
     return instance.post<ProfileType>("/auth/me", {});
+  },
+
+  logout() {
+    return instance.delete<LogoutResponseType>("/auth/me");
   },
 };
 
@@ -86,4 +95,9 @@ export type ArgChangeProfileData = {
 type ChangeProfileDataResponseType = {
   updatedUser: ProfileType;
   error?: string;
+};
+
+type LogoutResponseType = {
+  info: string;
+  error: string;
 };

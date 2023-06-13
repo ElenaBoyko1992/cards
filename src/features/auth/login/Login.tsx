@@ -14,7 +14,7 @@ import {
   TextField,
 } from "@mui/material";
 import { Field, FormikProvider, useFormik } from "formik";
-import { NavLink, redirect, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export const Login = () => {
@@ -56,7 +56,7 @@ export const Login = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      return navigate("/packs");
+      return navigate("/");
     }
   }, [isLoggedIn]);
 

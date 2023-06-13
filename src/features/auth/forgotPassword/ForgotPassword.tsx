@@ -41,7 +41,7 @@ export const ForgotPassword = () => {
   return (
     <>
       {changePasswordInstructionsWereSend ? (
-        <CheckEmail email={formik.values.email} />
+        <CheckEmail />
       ) : (
         <Grid container justifyContent={"center"} alignItems={"center"} className={s.container}>
           <Paper className={s.authWindow}>

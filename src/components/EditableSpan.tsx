@@ -1,5 +1,5 @@
 import React, { ChangeEvent, KeyboardEvent, useState } from "react";
-import { TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import pencilIcon from "assets/images/pencil-line-svgrepo-com.svg";
 import s from "./EditableSpan.module.css";
 
@@ -33,14 +33,20 @@ export const EditableSpan = React.memo(function (props: EditableSpanPropsType) {
   return (
     <div className={s.editableSpanWrapper}>
       {editMode ? (
-        <TextField
-          value={title}
-          onChange={changeTitle}
-          autoFocus
-          onBlur={activateViewMode}
-          placeholder={title}
-          onKeyUp={activateViewModeKeyPress}
-        />
+        <div>
+          <TextField
+            value={title}
+            onChange={changeTitle}
+            autoFocus
+            placeholder={title}
+            onKeyUp={activateViewModeKeyPress}
+            variant="standard"
+            label="Nickname"
+          />
+          <Button variant="contained" size={"small"} style={{ marginTop: "10px" }} onClick={activateViewMode}>
+            SAVE
+          </Button>
+        </div>
       ) : (
         <div>
           <span className={s.name}>{props.value}</span>

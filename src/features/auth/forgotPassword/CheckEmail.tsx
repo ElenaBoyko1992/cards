@@ -3,8 +3,10 @@ import { Button, Grid, Paper } from "@mui/material";
 import s from "features/auth/login/Auth.module.css";
 import icon from "assets/images/checkEmailIcon.png";
 import { NavLink } from "react-router-dom";
+import { useAppSelector } from "app/hooks";
 
-export const CheckEmail = (props: { email: string }) => {
+export const CheckEmail = () => {
+  const email = useAppSelector((state) => state.auth.emailForInstructions);
   return (
     <Grid container justifyContent={"center"} alignItems={"center"} className={s.container}>
       <Paper className={s.authWindow}>
@@ -14,7 +16,7 @@ export const CheckEmail = (props: { email: string }) => {
         </div>
         <div className={`${s.forgotPasswordInstructionsText} ${s.checkEmail}`}>
           We've sent an Email with instructions to <br />
-          {props.email}
+          {email}
         </div>
         <Button
           variant="contained"

@@ -2,17 +2,14 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { store } from "./app/store";
-import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
-import { createBrowserRouter, createHashRouter, redirect, RouterProvider } from "react-router-dom";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 import { Register } from "features/auth/register/Register";
 import { Login } from "features/auth/login/Login";
 import { ForgotPassword } from "features/auth/forgotPassword/ForgotPassword";
-import { useAppSelector } from "app/hooks";
 import { SetNewPassword } from "features/auth/forgotPassword/SetNewPassword";
-import { CheckEmail } from "features/auth/forgotPassword/CheckEmail";
-import { Profile } from "features/profile/Profile";
+import { Profile } from "features/auth/profile/Profile";
 
 const router = createHashRouter([
   {
@@ -35,10 +32,6 @@ const router = createHashRouter([
     path: "/set-new-password/:token",
     element: <SetNewPassword />,
   },
-  // {
-  //   path: "/profile",
-  //   element: <Profile />,
-  // },
   {
     path: "/packs",
     element: <h1>packs</h1>,

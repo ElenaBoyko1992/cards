@@ -18,9 +18,13 @@ const login = createAppAsyncThunk<{ profile: ProfileType }, ArgLoginType>("auth/
   return { profile: res.data };
 });
 
-const forgotPassword = createAppAsyncThunk<void, string>("auth/forgotPassword", async (email, thunkAPI) => {
-  await authApi.forgotPassword(email);
-});
+const forgotPassword = createAppAsyncThunk<{ email: string }, string>(
+  "auth/forgotPassword",
+  async (email, thunkAPI) => {
+    await authApi.forgotPassword(email);
+    return { email };
+  }
+);
 
 const setNewPassword = createAppAsyncThunk<void, ArgSetNewPasswordType>(
   "auth/setNewPassword",
@@ -40,10 +44,18 @@ const changeProfileData = createAppAsyncThunk<{ profile: ProfileType }, ArgChang
 const initializeApp = createAppAsyncThunk<{ profile: ProfileType }, void>(
   "auth/initializeApp",
   async (arg, thunkAPI) => {
-    const res = await authApi.me();
-    return { profile: res.data };
+    try {
+      const res = await authApi.me();
+      return { profile: res.data };
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
   }
 );
+
+const logout = createAppAsyncThunk<void, void>("auth/logout", async (arg, thunkAPI) => {
+  const res = await authApi.logout();
+});
 
 const slice = createSlice({
   name: "auth",
@@ -53,6 +65,7 @@ const slice = createSlice({
     isRegistered: false,
     changePasswordInstructionsWereSend: false,
     passwordWasChanged: false,
+    emailForInstructions: "",
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -66,6 +79,7 @@ const slice = createSlice({
       })
       .addCase(forgotPassword.fulfilled, (state, action) => {
         state.changePasswordInstructionsWereSend = true;
+        state.emailForInstructions = action.payload.email;
       })
       .addCase(setNewPassword.fulfilled, (state, action) => {
         state.passwordWasChanged = true;
@@ -76,10 +90,14 @@ const slice = createSlice({
       .addCase(initializeApp.fulfilled, (state, action) => {
         state.profile = action.payload.profile;
         state.isLoggedIn = true;
+      })
+      .addCase(logout.fulfilled, (state, action) => {
+        state.isLoggedIn = false;
+        state.profile = null;
       });
   },
 });
 
 export const authReducer = slice.reducer;
-export const authThunks = { register, login, forgotPassword, setNewPassword, changeProfileData, initializeApp };
+export const authThunks = { register, login, forgotPassword, setNewPassword, changeProfileData, initializeApp, logout };
 const authActions = slice.actions;
