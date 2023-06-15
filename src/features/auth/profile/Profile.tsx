@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 
 export const Profile = () => {
   const dispatch = useAppDispatch();
+  const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
   const navigate = useNavigate();
   const profile = useAppSelector((state) => state.auth.profile);
   const name = useAppSelector((state) => state.auth.profile?.name);
@@ -45,11 +46,12 @@ export const Profile = () => {
     fetchData();
   }, []);
 
-  // useEffect(() => {
-  //   if (!isLoggedIn) {
-  //     return navigate("/login");
-  //   }
-  // }, [isLoggedIn]);
+  useEffect(() => {
+    if (!isLoggedIn) {
+      return navigate("/login");
+    }
+  }, [isLoggedIn]);
+
   return (
     <Grid container justifyContent={"center"} alignItems={"center"} className={style.container}>
       <Paper className={s.window}>
