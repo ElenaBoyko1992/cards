@@ -3,7 +3,7 @@ import { Button, Grid, Paper } from "@mui/material";
 import s from "features/auth/login/Auth.module.css";
 import icon from "assets/images/checkEmailIcon.png";
 import { NavLink } from "react-router-dom";
-import { useAppSelector } from "app/hooks";
+import { useAppSelector } from "common/hooks";
 
 export const CheckEmail = () => {
   const email = useAppSelector((state) => state.auth.emailForInstructions);

@@ -8,14 +8,19 @@ import {
   ProfileType,
 } from "features/auth/auth.api";
 import { createAppAsyncThunk } from "common/utils/create-app-async-thunk";
+import { thunkTryCatch } from "common/utils/thunk-try-catch";
 
 const register = createAppAsyncThunk<void, ArgRegisterType>("auth/register", async (arg, thunkAPI) => {
-  await authApi.register(arg);
+  return thunkTryCatch(thunkAPI, async () => {
+    await authApi.register(arg);
+  });
 });
 
 const login = createAppAsyncThunk<{ profile: ProfileType }, ArgLoginType>("auth/login", async (arg, thunkAPI) => {
-  const res = await authApi.login(arg);
-  return { profile: res.data };
+  return thunkTryCatch(thunkAPI, async () => {
+    const res = await authApi.login(arg);
+    return { profile: res.data };
+  });
 });
 
 const forgotPassword = createAppAsyncThunk<{ email: string }, string>(
@@ -48,7 +53,7 @@ const initializeApp = createAppAsyncThunk<{ profile: ProfileType }, void>(
       const res = await authApi.me();
       return { profile: res.data };
     } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+      return thunkAPI.rejectWithValue(null);
     }
   }
 );

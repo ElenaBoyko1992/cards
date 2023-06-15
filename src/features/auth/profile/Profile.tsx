@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "app/hooks";
+import { useAppDispatch, useAppSelector } from "common/hooks";
 import style from "features/auth/login/Auth.module.css";
 import s from "features/auth/profile/Profile.module.css";
 import { Button, Grid, Paper } from "@mui/material";

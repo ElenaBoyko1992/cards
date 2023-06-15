@@ -1,26 +1,12 @@
-import React, { useEffect } from "react";
-import { Counter } from "./features/counter/Counter";
+import React from "react";
 import "./App.css";
-import { useAppDispatch, useAppSelector } from "app/hooks";
-import { appActions } from "app/app.slice";
+import { useAppSelector } from "common/hooks";
+import { LinearProgress } from "@mui/material";
 
-function App() {
+export const App = () => {
   const isLoading = useAppSelector((state) => state.app.isLoading);
 
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    setTimeout(() => {
-      dispatch(appActions.setIsLoading({ isLoading: false }));
-    }, 3000);
-  }, []);
-
-  return (
-    <div className="App">
-      {isLoading && <h1>Loader...</h1>}
-      <Counter />
-    </div>
-  );
-}
+  return <div className="App">{isLoading && <LinearProgress />} </div>;
+};
 
 export default App;

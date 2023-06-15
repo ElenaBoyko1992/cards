@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "app/hooks";
+import { useAppDispatch, useAppSelector } from "common/hooks";
 import { authThunks } from "features/auth/auth.slice";
 import s from "features/auth/login/Auth.module.css";
 import {
