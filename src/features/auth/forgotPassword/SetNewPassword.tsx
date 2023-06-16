@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "common/hooks";
+import { useAppDispatch } from "common/hooks";
 import { authThunks } from "features/auth/auth.slice";
 import { useNavigate, useParams } from "react-router-dom";
 import { FormikProvider, useFormik } from "formik";
 import { Button, FormControl, Grid, IconButton, Input, InputAdornment, InputLabel, Paper } from "@mui/material";
 import s from "features/auth/login/Auth.module.css";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useAppSelector } from "common/hooks";
 
 export const SetNewPassword = () => {
   const dispatch = useAppDispatch();

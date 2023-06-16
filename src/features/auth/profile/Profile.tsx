@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "common/hooks";
+import { useAppDispatch } from "common/hooks";
 import style from "features/auth/login/Auth.module.css";
 import s from "features/auth/profile/Profile.module.css";
 import { Button, Grid, Paper } from "@mui/material";
@@ -9,6 +9,7 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import { EditableSpan } from "components/EditableSpan";
 import { authThunks } from "features/auth/auth.slice";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "common/hooks";
 
 export const Profile = () => {
   const dispatch = useAppDispatch();

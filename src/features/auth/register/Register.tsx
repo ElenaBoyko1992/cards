@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "common/hooks";
+import { useAppDispatch } from "common/hooks";
 import { authThunks } from "features/auth/auth.slice";
 import s from "features/auth/login/Auth.module.css";
 import {
@@ -16,6 +16,7 @@ import {
 import { FormikProvider, useFormik } from "formik";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useAppSelector } from "common/hooks";
 
 export const Register = () => {
   const dispatch = useAppDispatch();

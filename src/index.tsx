@@ -11,7 +11,7 @@ import { ForgotPassword } from "features/auth/forgotPassword/ForgotPassword";
 import { SetNewPassword } from "features/auth/forgotPassword/SetNewPassword";
 import { Profile } from "features/auth/profile/Profile";
 import "react-toastify/dist/ReactToastify.css";
-import { GlobalError } from "common/GlobalError/GlobalError";
+import { GlobalError } from "components/GlobalError/GlobalError";
 import App from "App";
 
 const router = createHashRouter([

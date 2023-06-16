@@ -1,11 +1,12 @@
 import React from "react";
-import { useAppDispatch, useAppSelector } from "common/hooks";
+import { useAppDispatch } from "common/hooks";
 import { authThunks } from "features/auth/auth.slice";
 import { FormikProvider, useFormik } from "formik";
 import { Button, Grid, Paper, TextField } from "@mui/material";
 import s from "features/auth/login/Auth.module.css";
 import { NavLink } from "react-router-dom";
 import { CheckEmail } from "features/auth/forgotPassword/CheckEmail";
+import { useAppSelector } from "common/hooks";
 
 export const ForgotPassword = () => {
   const dispatch = useAppDispatch();

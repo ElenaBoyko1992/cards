@@ -1,4 +1,4 @@
-import { forgotPasswordInstance, instance } from "common/api/common.api";
+import { forgotPasswordInstance, instance } from "common/api";
 
 export const authApi = {
   register(payload: ArgRegisterType) {

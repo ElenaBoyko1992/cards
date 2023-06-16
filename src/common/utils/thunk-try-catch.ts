@@ -5,10 +5,9 @@ import { AxiosError, isAxiosError } from "axios";
 
 export const thunkTryCatch = async (thunkAPI: BaseThunkAPI<RootState, any, AppDispatch, null>, logic: Function) => {
   const { dispatch, rejectWithValue } = thunkAPI;
-  dispatch(appActions.setIsLoading({ isLoading: true }));
   try {
+    dispatch(appActions.setIsLoading({ isLoading: true }));
     const res = await logic();
-    dispatch(appActions.setIsLoading({ isLoading: false }));
     return res;
   } catch (e) {
     const err = e as Error | AxiosError<{ error: string }>;
@@ -18,7 +17,8 @@ export const thunkTryCatch = async (thunkAPI: BaseThunkAPI<RootState, any, AppDi
     } else {
       dispatch(appActions.setAppError({ error: `Native error ${err.message}` }));
     }
-    dispatch(appActions.setIsLoading({ isLoading: false }));
     return rejectWithValue(null);
+  } finally {
+    dispatch(appActions.setIsLoading({ isLoading: false }));
   }
 };

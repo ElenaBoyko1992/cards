@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
-import { useAppSelector } from "common/hooks";
 import { LinearProgress } from "@mui/material";
+import { useAppSelector } from "common/hooks";
 
 export const App = () => {
   const isLoading = useAppSelector((state) => state.app.isLoading);
