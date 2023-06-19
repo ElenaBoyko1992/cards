@@ -20,7 +20,6 @@ import { useAppSelector } from "common/hooks";
 
 export const Register = () => {
   const dispatch = useAppDispatch();
-  const isRegistered = useAppSelector((state) => state.auth.isRegistered);
   const navigate = useNavigate();
 
   //code for password field
@@ -65,16 +64,11 @@ export const Register = () => {
       password: "",
       confirmPassword: "",
     },
-    onSubmit: (values, formikHelpers) => {
-      dispatch(authThunks.register(values));
+    onSubmit: async (values, formikHelpers) => {
+      await dispatch(authThunks.register(values));
+      navigate("/login");
     },
   });
-
-  useEffect(() => {
-    if (isRegistered) {
-      return navigate("/login");
-    }
-  }, [isRegistered]);
 
   return (
     <Grid container justifyContent={"center"} alignItems={"center"} className={s.container}>

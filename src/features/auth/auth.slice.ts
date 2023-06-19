@@ -9,6 +9,7 @@ import {
 } from "features/auth/auth.api";
 import { createAppAsyncThunk } from "common/utils";
 import { thunkTryCatch } from "common/utils";
+import { toast } from "react-toastify";
 
 const register = createAppAsyncThunk<void, ArgRegisterType>("auth/register", async (arg, thunkAPI) => {
   return thunkTryCatch(thunkAPI, async () => {
@@ -19,6 +20,7 @@ const register = createAppAsyncThunk<void, ArgRegisterType>("auth/register", asy
 const login = createAppAsyncThunk<{ profile: ProfileType }, ArgLoginType>("auth/login", async (arg, thunkAPI) => {
   return thunkTryCatch(thunkAPI, async () => {
     const res = await authApi.login(arg);
+    toast.success("Вы успешно залогинились");
     return { profile: res.data };
   });
 });
@@ -59,7 +61,9 @@ const initializeApp = createAppAsyncThunk<{ profile: ProfileType }, void>(
 );
 
 const logout = createAppAsyncThunk<void, void>("auth/logout", async (arg, thunkAPI) => {
-  const res = await authApi.logout();
+  return thunkTryCatch(thunkAPI, async () => {
+    await authApi.logout();
+  });
 });
 
 const slice = createSlice({

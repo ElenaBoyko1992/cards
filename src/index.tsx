@@ -13,6 +13,7 @@ import { Profile } from "features/auth/profile/Profile";
 import "react-toastify/dist/ReactToastify.css";
 import { GlobalError } from "components/GlobalError/GlobalError";
 import App from "App";
+import { CheckEmail } from "features/auth/forgotPassword/CheckEmail";
 
 const router = createHashRouter([
   {
