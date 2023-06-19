@@ -57,7 +57,7 @@ export const Login = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      return navigate("/");
+      return navigate("/packs");
     }
   }, [isLoggedIn]);
 

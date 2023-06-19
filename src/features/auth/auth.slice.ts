@@ -20,7 +20,7 @@ const register = createAppAsyncThunk<void, ArgRegisterType>("auth/register", asy
 const login = createAppAsyncThunk<{ profile: ProfileType }, ArgLoginType>("auth/login", async (arg, thunkAPI) => {
   return thunkTryCatch(thunkAPI, async () => {
     const res = await authApi.login(arg);
-    toast.success("Вы успешно залогинились");
+    // toast.success("Вы успешно залогинились");
     return { profile: res.data };
   });
 });

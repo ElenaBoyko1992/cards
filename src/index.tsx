@@ -18,31 +18,37 @@ import { CheckEmail } from "features/auth/forgotPassword/CheckEmail";
 const router = createHashRouter([
   {
     path: "/",
-    element: <Profile />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/register",
-    element: <Register />,
-  },
-  {
-    path: "/forgot-password",
-    element: <ForgotPassword />,
-  },
-  {
-    path: "/set-new-password/:token",
-    element: <SetNewPassword />,
-  },
-  {
-    path: "/packs",
-    element: <h1>packs</h1>,
-  },
-  {
-    path: "/cards",
-    element: <h1>cards</h1>,
+    element: <App />,
+    children: [
+      {
+        path: "/profile",
+        element: <Profile />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        path: "/register",
+        element: <Register />,
+      },
+      {
+        path: "/forgot-password",
+        element: <ForgotPassword />,
+      },
+      {
+        path: "/set-new-password/:token",
+        element: <SetNewPassword />,
+      },
+      {
+        path: "/packs",
+        element: <h1>packs</h1>,
+      },
+      {
+        path: "/cards",
+        element: <h1>cards</h1>,
+      },
+    ],
   },
 ]);
 
@@ -51,7 +57,7 @@ const root = createRoot(container);
 
 root.render(
   <Provider store={store}>
-    <App />
+    {/*<App />*/}
     <RouterProvider router={router} />
     <GlobalError />
   </Provider>
