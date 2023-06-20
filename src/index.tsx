@@ -14,6 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { GlobalError } from "components/GlobalError/GlobalError";
 import App from "App";
 import { CheckEmail } from "features/auth/forgotPassword/CheckEmail";
+import { Packs } from "features/packs/Packs";
 
 const router = createHashRouter([
   {
@@ -42,7 +43,7 @@ const router = createHashRouter([
       },
       {
         path: "/packs",
-        element: <h1>packs</h1>,
+        element: <Packs />,
       },
       {
         path: "/cards",
