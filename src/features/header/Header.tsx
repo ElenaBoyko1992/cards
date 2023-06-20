@@ -1,5 +1,5 @@
 import { AppBar, Button, LinearProgress, Toolbar, Typography } from "@mui/material";
-import s from "App.module.css";
+import s from "./Header.module.css";
 import React from "react";
 import { useAppSelector } from "common/hooks";
 import defaultAvatar from "assets/images/defaultAvatar.png";
@@ -10,7 +10,7 @@ export const Header = () => {
   const userName = useAppSelector((state) => state.auth.profile?.name);
 
   return (
-    <>
+    <header className={s.header}>
       <AppBar position="static" color={"transparent"}>
         <Toolbar className={s.toolbar}>
           <Typography variant={"inherit"}>Study cards</Typography>
@@ -37,6 +37,6 @@ export const Header = () => {
           )}
         </Toolbar>
       </AppBar>
-    </>
+    </header>
   );
 };

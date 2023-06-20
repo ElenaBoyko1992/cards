@@ -7,9 +7,7 @@ import {
   authApi,
   ProfileType,
 } from "features/auth/auth.api";
-import { createAppAsyncThunk } from "common/utils";
-import { thunkTryCatch } from "common/utils";
-import { toast } from "react-toastify";
+import { createAppAsyncThunk, thunkTryCatch } from "common/utils";
 
 const register = createAppAsyncThunk<void, ArgRegisterType>("auth/register", async (arg, thunkAPI) => {
   return thunkTryCatch(thunkAPI, async () => {

@@ -33,7 +33,7 @@ export const Profile = () => {
     dispatch(authThunks.logout());
   };
 
-  useEffect(() => {
+  /*useEffect(() => {
     // declare the data fetching function
     const fetchData = async () => {
       if (!profile) {
@@ -45,7 +45,7 @@ export const Profile = () => {
     };
     // call the function
     fetchData();
-  }, []);
+  }, []);*/
 
   useEffect(() => {
     if (!isLoggedIn) {

@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@mui/material";
-import { NavLink } from "react-router-dom";
 import s from "./Packs.module.css";
+import EnhancedTable from "features/packs/Table";
 
 export const Packs = () => {
   return (
@@ -22,6 +22,7 @@ export const Packs = () => {
           Add new pack
         </Button>
       </div>
+      <EnhancedTable />
     </div>
   );
 };
