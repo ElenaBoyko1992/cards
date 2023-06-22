@@ -52,8 +52,8 @@ const initializeApp = createAppAsyncThunk<{ profile: ProfileType }, void>(
     try {
       const res = await authApi.me();
       return { profile: res.data };
-    } catch (error) {
-      return thunkAPI.rejectWithValue(null);
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error);
     }
   }
 );

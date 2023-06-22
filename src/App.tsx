@@ -19,6 +19,8 @@ export const App = () => {
         const resultAction = await dispatch(authThunks.initializeApp());
         if (authThunks.initializeApp.rejected.match(resultAction)) {
           return navigate("/login");
+        } else {
+          return navigate("/packs");
         }
       }
     };
