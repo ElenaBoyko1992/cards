@@ -251,21 +251,16 @@ export default function EnhancedTable() {
     };
   });
 
-  const rows = React.useMemo(
-    () =>
-      packsForTable.map((packItem) => {
-        debugger;
-        return createData(
-          packItem.name,
-          packItem.cardsCount,
-          packItem.lastUpdated,
-          packItem.createdBy,
-          packItem.actions,
-          packItem.id
-        );
-      }),
-    [packsForTable]
-  );
+  const rows = packsForTable.map((packItem) => {
+    return createData(
+      packItem.name,
+      packItem.cardsCount,
+      packItem.lastUpdated,
+      packItem.createdBy,
+      packItem.actions,
+      packItem.id
+    );
+  });
 
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("name");
@@ -325,7 +320,6 @@ export default function EnhancedTable() {
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   const visibleRows = React.useMemo(() => {
-    debugger;
     return stableSort(rows, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   }, [rows, order, orderBy, page, rowsPerPage]);
   console.log(rows);

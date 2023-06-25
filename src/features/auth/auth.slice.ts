@@ -49,12 +49,10 @@ const changeProfileData = createAppAsyncThunk<{ profile: ProfileType }, ArgChang
 const initializeApp = createAppAsyncThunk<{ profile: ProfileType }, void>(
   "auth/initializeApp",
   async (arg, thunkAPI) => {
-    try {
+    return thunkTryCatch(thunkAPI, async () => {
       const res = await authApi.me();
       return { profile: res.data };
-    } catch (error: any) {
-      return thunkAPI.rejectWithValue(error);
-    }
+    });
   }
 );
 
