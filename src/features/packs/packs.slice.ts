@@ -3,10 +3,10 @@ import { createAppAsyncThunk, thunkTryCatch } from "common/utils";
 import { packsApi, PacksType, PackType } from "features/packs/packs.api";
 import { ProfileType } from "features/auth/auth.api";
 
-const getPacks = createAppAsyncThunk<{ packsItems: PacksType }, void>("packs/getPacks", async (arg, thunkAPI) => {
+const getPacks = createAppAsyncThunk<{ packsItems: PacksType }, any>("packs/getPacks", async (arg, thunkAPI) => {
   return thunkTryCatch(thunkAPI, async () => {
-    const res = await packsApi.getPacks({});
-    console.log(thunkAPI.getState());
+    const res = await packsApi.getPacks(arg);
+    console.log(arg);
     return { packsItems: res.data.cardPacks };
   });
 });

@@ -6,11 +6,11 @@ import { packsThunks } from "features/packs/packs.slice";
 import { useAppDispatch, useAppSelector } from "common/hooks";
 
 export const Packs = () => {
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    dispatch(packsThunks.getPacks());
-  }, []);
+  // const dispatch = useAppDispatch();
+  //
+  // useEffect(() => {
+  //   dispatch(packsThunks.getPacks());
+  // }, []);
   return (
     <div className={s.packsContainer}>
       <div className={s.tableTitle}>

@@ -2,7 +2,7 @@ import { instance } from "common/api";
 
 export const packsApi = {
   getPacks(payload: any) {
-    return instance.get<any>("cards/pack", payload);
+    return instance.get<any>("cards/pack", { params: payload });
   },
 };
 

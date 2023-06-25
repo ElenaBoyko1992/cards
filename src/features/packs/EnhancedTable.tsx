@@ -9,11 +9,12 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Paper from "@mui/material/Paper";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
 import { visuallyHidden } from "@mui/utils";
 import s from "./Packs.module.css";
-import { useAppSelector } from "common/hooks";
+import { useAppDispatch, useAppSelector } from "common/hooks";
+import { useEffect } from "react";
+import { packsThunks } from "features/packs/packs.slice";
+import { Pagination } from "@mui/material";
 
 interface Data {
   name: string;
@@ -21,15 +22,24 @@ interface Data {
   lastUpdated: string;
   createdBy: string;
   actions: any;
+  id: number | string;
 }
 
-function createData(name: string, cards: number, lastUpdated: string, createdBy: string, actions: any): Data {
+function createData(
+  name: string,
+  cards: number,
+  lastUpdated: string,
+  createdBy: string,
+  actions: any,
+  id: number | string
+): Data {
   return {
     name,
     cards,
     lastUpdated,
     createdBy,
     actions,
+    id,
   };
 }
 
@@ -50,6 +60,8 @@ function createData(name: string, cards: number, lastUpdated: string, createdBy:
 //   // createData("Oreo", 437, 18.0, 63, 4.0),
 // ];
 
+type Order = "asc" | "desc";
+
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -59,8 +71,6 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   }
   return 0;
 }
-
-type Order = "asc" | "desc";
 
 function getComparator<Key extends keyof any>(
   order: Order,
@@ -128,7 +138,7 @@ const headCells: readonly HeadCell[] = [
 ];
 
 interface EnhancedTableProps {
-  numSelected: number;
+  // numSelected: number;
   onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   order: Order;
@@ -137,7 +147,7 @@ interface EnhancedTableProps {
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+  const { onSelectAllClick, order, orderBy, rowCount, onRequestSort } = props;
   const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
     onRequestSort(event, property);
   };
@@ -228,8 +238,9 @@ interface EnhancedTableToolbarProps {
 // }
 
 export default function EnhancedTable() {
+  const dispatch = useAppDispatch();
   const packs = useAppSelector((state) => state.packs.packsItems);
-  const packsForTable = packs?.map((pack) => {
+  const packsForTable = packs.map((pack) => {
     return {
       name: pack.name,
       cardsCount: pack.cardsCount,
@@ -240,10 +251,22 @@ export default function EnhancedTable() {
     };
   });
 
-  const rows = packsForTable.map((packItem) =>
-    createData(packItem.name, packItem.cardsCount, packItem.lastUpdated, packItem.createdBy, packItem.actions)
+  const rows = React.useMemo(
+    () =>
+      packsForTable.map((packItem) => {
+        debugger;
+        return createData(
+          packItem.name,
+          packItem.cardsCount,
+          packItem.lastUpdated,
+          packItem.createdBy,
+          packItem.actions,
+          packItem.id
+        );
+      }),
+    [packsForTable]
   );
-  console.log(rows);
+
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("name");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
@@ -283,8 +306,8 @@ export default function EnhancedTable() {
     setSelected(newSelected);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
+  const handleChangePage = (event: React.ChangeEvent<unknown>, page: number) => {
+    setPage(page);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -301,10 +324,15 @@ export default function EnhancedTable() {
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-  const visibleRows = React.useMemo(
-    () => stableSort(rows, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [order, orderBy, page, rowsPerPage]
-  );
+  const visibleRows = React.useMemo(() => {
+    debugger;
+    return stableSort(rows, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  }, [rows, order, orderBy, page, rowsPerPage]);
+  console.log(rows);
+  console.log(visibleRows);
+  useEffect(() => {
+    dispatch(packsThunks.getPacks({ page: page, pageCount: rowsPerPage }));
+  }, [page, rowsPerPage]);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -313,7 +341,7 @@ export default function EnhancedTable() {
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={dense ? "small" : "medium"}>
             <EnhancedTableHead
-              numSelected={selected.length}
+              // numSelected={selected.length}
               order={order}
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
@@ -332,7 +360,7 @@ export default function EnhancedTable() {
                     // role="checkbox"
                     // aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.name}
+                    key={row.id}
                     // selected={isItemSelected}
                     // sx={{ cursor: "pointer" }}
                   >
@@ -367,15 +395,16 @@ export default function EnhancedTable() {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        <Pagination count={5} shape="rounded" color="primary" size="small" onChange={handleChangePage} />
+        {/*<TablePagination*/}
+        {/*  rowsPerPageOptions={[5, 10, 25]}*/}
+        {/*  component="div"*/}
+        {/*  count={rows.length}*/}
+        {/*  rowsPerPage={rowsPerPage}*/}
+        {/*  page={page}*/}
+        {/*  // onPageChange={handleChangePage}*/}
+        {/*  onRowsPerPageChange={handleChangeRowsPerPage}*/}
+        {/*/>*/}
       </Paper>
     </Box>
   );
