@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   ArgChangeProfileData,
   ArgLoginType,
@@ -49,10 +49,19 @@ const changeProfileData = createAppAsyncThunk<{ profile: ProfileType }, ArgChang
 const initializeApp = createAppAsyncThunk<{ profile: ProfileType }, void>(
   "auth/initializeApp",
   async (arg, thunkAPI) => {
-    return thunkTryCatch(thunkAPI, async () => {
+    // return thunkTryCatch(thunkAPI, async () => {
+    //   const res = await authApi.me();
+    //   return { profile: res.data };
+    // });
+    const { dispatch, rejectWithValue } = thunkAPI;
+    try {
       const res = await authApi.me();
       return { profile: res.data };
-    });
+    } catch (e) {
+      return rejectWithValue(e);
+    } finally {
+      dispatch(authActions.setIsInitialized({ value: true }));
+    }
   }
 );
 
@@ -71,8 +80,13 @@ const slice = createSlice({
     changePasswordInstructionsWereSend: false,
     passwordWasChanged: false,
     emailForInstructions: "",
+    isInitialized: false,
   },
-  reducers: {},
+  reducers: {
+    setIsInitialized(state, action: PayloadAction<{ value: boolean }>) {
+      state.isInitialized = action.payload.value;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(login.fulfilled, (state, action) => {
@@ -95,6 +109,7 @@ const slice = createSlice({
       .addCase(initializeApp.fulfilled, (state, action) => {
         state.profile = action.payload.profile;
         state.isLoggedIn = true;
+        state.isInitialized = true;
       })
       .addCase(logout.fulfilled, (state, action) => {
         state.isLoggedIn = false;

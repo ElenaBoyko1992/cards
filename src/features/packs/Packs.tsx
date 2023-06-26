@@ -1,9 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Button } from "@mui/material";
 import s from "./Packs.module.css";
 import EnhancedTable from "features/packs/EnhancedTable";
-import { packsThunks } from "features/packs/packs.slice";
-import { useAppDispatch, useAppSelector } from "common/hooks";
+import DataGridTable from "features/packs/DataGridTable";
 
 export const Packs = () => {
   // const dispatch = useAppDispatch();
@@ -11,6 +10,7 @@ export const Packs = () => {
   // useEffect(() => {
   //   dispatch(packsThunks.getPacks());
   // }, []);
+
   return (
     <div className={s.packsContainer}>
       <div className={s.tableTitle}>
@@ -29,7 +29,9 @@ export const Packs = () => {
           Add new pack
         </Button>
       </div>
-      <EnhancedTable />
+
+      {/*<EnhancedTable /> - old component*/}
+      <DataGridTable />
     </div>
   );
 };

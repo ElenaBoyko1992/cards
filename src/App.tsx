@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import s from "./App.module.css";
-import { AppBar, Button, IconButton, LinearProgress, Menu, Toolbar, Typography } from "@mui/material";
+import { AppBar, Button, CircularProgress, IconButton, LinearProgress, Menu, Toolbar, Typography } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "common/hooks";
 import { Header } from "features/header/Header";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -11,6 +11,8 @@ export const App = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const profile = useAppSelector((state) => state.auth.profile);
+  const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
+  const isInitialized = useAppSelector((state) => state.auth.isInitialized);
 
   useEffect(() => {
     // declare the data fetching function
@@ -27,6 +29,15 @@ export const App = () => {
     // call the function
     fetchData();
   }, []);
+
+  if (!isInitialized) {
+    return (
+      <div style={{ position: "fixed", top: "30%", textAlign: "center", width: "100%" }}>
+        <CircularProgress />
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="App">{isLoading && <LinearProgress />} </div>

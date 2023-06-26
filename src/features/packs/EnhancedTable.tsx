@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "common/hooks";
 import { useEffect } from "react";
 import { packsThunks } from "features/packs/packs.slice";
 import { Pagination } from "@mui/material";
+import { authThunks } from "features/auth/auth.slice";
 
 interface Data {
   name: string;
@@ -87,6 +88,7 @@ function getComparator<Key extends keyof any>(
 // with exampleArray.slice().sort(exampleComparator)
 function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
   const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
+  console.log("stabilizedThis", stabilizedThis);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) {
@@ -94,6 +96,10 @@ function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) 
     }
     return a[1] - b[1];
   });
+  console.log(
+    "result",
+    stabilizedThis.map((el) => el[0])
+  );
   return stabilizedThis.map((el) => el[0]);
 }
 
@@ -240,6 +246,7 @@ interface EnhancedTableToolbarProps {
 export default function EnhancedTable() {
   const dispatch = useAppDispatch();
   const packs = useAppSelector((state) => state.packs.packsItems);
+
   const packsForTable = packs.map((pack) => {
     return {
       name: pack.name,
@@ -318,12 +325,18 @@ export default function EnhancedTable() {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  //console.log("emptyRows", emptyRows);
+  // const visibleRows = React.useMemo(() => {
+  //   return stableSort(rows, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  // }, [rows, order, orderBy, page, rowsPerPage]);
+  // console.log("visibleRows", visibleRows);
 
-  const visibleRows = React.useMemo(() => {
-    return stableSort(rows, getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-  }, [rows, order, orderBy, page, rowsPerPage]);
-  console.log(rows);
-  console.log(visibleRows);
+  const visibleRows = stableSort(rows, getComparator(order, orderBy)).slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
+  console.log("visibleRows", visibleRows);
   useEffect(() => {
     dispatch(packsThunks.getPacks({ page: page, pageCount: rowsPerPage }));
   }, [page, rowsPerPage]);

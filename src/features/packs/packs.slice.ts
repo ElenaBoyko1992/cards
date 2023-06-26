@@ -6,7 +6,7 @@ import { ProfileType } from "features/auth/auth.api";
 const getPacks = createAppAsyncThunk<{ packsItems: PacksType }, any>("packs/getPacks", async (arg, thunkAPI) => {
   return thunkTryCatch(thunkAPI, async () => {
     const res = await packsApi.getPacks(arg);
-    console.log(arg);
+
     return { packsItems: res.data.cardPacks };
   });
 });
