@@ -337,9 +337,9 @@ export default function EnhancedTable() {
   );
 
   console.log("visibleRows", visibleRows);
-  useEffect(() => {
-    dispatch(packsThunks.getPacks({ page: page, pageCount: rowsPerPage }));
-  }, [page, rowsPerPage]);
+  // useEffect(() => {
+  //   dispatch(packsThunks.getPacks({ page: page, pageCount: rowsPerPage }));
+  // }, [page, rowsPerPage]);
 
   return (
     <Box sx={{ width: "100%" }}>

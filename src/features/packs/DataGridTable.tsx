@@ -33,9 +33,9 @@ export default function DataGridTable() {
     page: 0,
   });
   console.log(paginationModel);
-  useEffect(() => {
-    dispatch(packsThunks.getPacks({}));
-  }, []);
+  // useEffect(() => {
+  //   dispatch(packsThunks.getPacks({ pageCount: paginationModel.pageSize }));
+  // }, []);
   return (
     <div style={{ height: "auto", width: "100%" }}>
       <DataGrid

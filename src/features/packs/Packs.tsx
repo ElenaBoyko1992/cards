@@ -3,6 +3,7 @@ import { Button } from "@mui/material";
 import s from "./Packs.module.css";
 import EnhancedTable from "features/packs/EnhancedTable";
 import DataGridTable from "features/packs/DataGridTable";
+import BasicTable from "features/packs/BasicTable";
 
 export const Packs = () => {
   // const dispatch = useAppDispatch();
@@ -31,7 +32,8 @@ export const Packs = () => {
       </div>
 
       {/*<EnhancedTable /> - old component*/}
-      <DataGridTable />
+      {/*<DataGridTable /> - old component*/}
+      <BasicTable />
     </div>
   );
 };
