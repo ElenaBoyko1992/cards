@@ -10,6 +10,7 @@ import Paper from "@mui/material/Paper";
 import { useAppDispatch, useAppSelector } from "common/hooks";
 import { packsThunks } from "features/packs/packs.slice";
 import {
+  Box,
   Input,
   InputAdornment,
   InputLabel,
@@ -18,11 +19,13 @@ import {
   Pagination,
   Select,
   SelectChangeEvent,
+  Slider,
   TableSortLabel,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
 import s from "./Packs.module.css";
-import { AccountCircle } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useDebounce } from "common/hooks/useDebounce";
 
@@ -43,6 +46,7 @@ export default function BasicTable() {
   const dispatch = useAppDispatch();
   const packs = useAppSelector((state) => state.packs.packsItems);
   const cardPacksTotalCount = useAppSelector((state) => state.packs.cardPacksTotalCount);
+  const userId = useAppSelector((state) => (state.auth.profile ? state.auth.profile._id : ""));
   const rows = packs.map((pack) => {
     return createData(pack.name, pack.cardsCount, pack.updated, pack.created, "заглушка", pack._id);
   });
@@ -55,11 +59,12 @@ export default function BasicTable() {
   const [lastUpdatedSortIsActive, setLastUpdatedSortIsActive] = useState(false);
   const [createdSortIsActive, setCreatedSortIsActive] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [page, setPage] = React.useState(0);
+  const [page, setPage] = React.useState(1);
   const [searchValue, setSearchValue] = useState<string>("");
-
+  const [userIdForShowingMyPacks, setUserIdForShowingMyPacks] = useState("");
   const debouncedValue = useDebounce<string>(searchValue, 500);
-
+  const [valueForSlider, setValueForSlider] = useState([0, 75]);
+  console.log("valueForSlider", valueForSlider);
   const tablePaginationCount = useMemo(() => {
     return Math.ceil(cardPacksTotalCount / rowsPerPage);
   }, [cardPacksTotalCount, rowsPerPage]);
@@ -103,6 +108,7 @@ export default function BasicTable() {
 
   const handleChangeRowsPerPage = (event: SelectChangeEvent) => {
     setRowsPerPage(parseInt(event.target.value, 10) as number);
+    setPage(1);
   };
 
   const paginationChangedHandler = async (event: React.ChangeEvent<unknown>, page: number) => {
@@ -111,30 +117,86 @@ export default function BasicTable() {
 
   const searchHandler = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     setSearchValue(event.target.value);
+    setPage(1);
   };
 
-  // useEffect(() => {
-  //   dispatch(packsThunks.getPacks({ pageCount: rowsPerPage, page, packName: searchValue }));
-  // }, [debouncedValue]);
+  const showPacksCardsHandler = (event: React.MouseEvent<HTMLElement>, newAlignment: string) => {
+    setUserIdForShowingMyPacks(newAlignment);
+    setPage(1);
+  };
+
+  const minDistance = 1;
+  const sliderHandleChange1 = (event: Event, newValue: number | number[], activeThumb: number) => {
+    if (!Array.isArray(newValue)) {
+      return;
+    }
+
+    if (activeThumb === 0) {
+      setValueForSlider([Math.min(newValue[0], valueForSlider[1] - minDistance), valueForSlider[1]]);
+    } else {
+      setValueForSlider([valueForSlider[0], Math.max(newValue[1], valueForSlider[0] + minDistance)]);
+    }
+  };
+
+  const handleInputSliderChangeMin = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValueForSlider([event.target.value === "" ? 0 : Number(event.target.value), valueForSlider[1]]);
+  };
+
+  const handleInputSliderChangeMax = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValueForSlider([valueForSlider[0], event.target.value === "" ? 0 : Number(event.target.value)]);
+  };
 
   useEffect(() => {
-    // dispatch(packsThunks.getPacks({ pageCount: rowsPerPage, page }));
-    if (searchValue) {
-      dispatch(packsThunks.getPacks({ pageCount: rowsPerPage, page, packName: searchValue }));
-    } else if (nameSortIsActive) {
-      dispatch(packsThunks.getPacks({ sortPacks: `${sortNumber}name`, pageCount: rowsPerPage, page }));
+    if (nameSortIsActive) {
+      dispatch(
+        packsThunks.getPacks({
+          sortPacks: `${sortNumber}name`,
+          pageCount: rowsPerPage,
+          page,
+          packName: searchValue,
+          user_id: userIdForShowingMyPacks,
+        })
+      );
     } else if (cardsCountSortIsActive) {
-      dispatch(packsThunks.getPacks({ sortPacks: `${sortNumber}cardsCount`, pageCount: rowsPerPage, page }));
+      dispatch(
+        packsThunks.getPacks({
+          sortPacks: `${sortNumber}cardsCount`,
+          pageCount: rowsPerPage,
+          page,
+          packName: searchValue,
+          user_id: userIdForShowingMyPacks,
+        })
+      );
     } else if (lastUpdatedSortIsActive) {
-      dispatch(packsThunks.getPacks({ sortPacks: `${sortNumber}updated`, pageCount: rowsPerPage, page }));
+      dispatch(
+        packsThunks.getPacks({
+          sortPacks: `${sortNumber}updated`,
+          pageCount: rowsPerPage,
+          page,
+          packName: searchValue,
+          user_id: userIdForShowingMyPacks,
+        })
+      );
     } else if (createdSortIsActive) {
-      dispatch(packsThunks.getPacks({ sortPacks: `${sortNumber}created`, pageCount: rowsPerPage, page }));
+      dispatch(
+        packsThunks.getPacks({
+          sortPacks: `${sortNumber}created`,
+          pageCount: rowsPerPage,
+          page,
+          packName: searchValue,
+          user_id: userIdForShowingMyPacks,
+        })
+      );
     } else {
-      dispatch(packsThunks.getPacks({ pageCount: rowsPerPage, page }));
+      dispatch(
+        packsThunks.getPacks({
+          pageCount: rowsPerPage,
+          page,
+          packName: searchValue,
+          user_id: userIdForShowingMyPacks,
+        })
+      );
     }
-    // cardsCountSortIsActive && sortByCardsCountHandler();
-    // lastUpdatedSortIsActive && sortByLastUpdatedHandler();
-    // createdSortIsActive && sortByCreatedHandler();
   }, [
     page,
     rowsPerPage,
@@ -144,25 +206,96 @@ export default function BasicTable() {
     lastUpdatedSortIsActive,
     createdSortIsActive,
     debouncedValue,
+    userIdForShowingMyPacks,
   ]);
 
   return (
     <>
       <div className={s.tableFilters}>
-        <InputLabel shrink htmlFor="search-input" className={s.inputLabelText}>
-          Search
-        </InputLabel>
-        <OutlinedInput
-          id="search-input"
-          onChange={searchHandler}
-          startAdornment={
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          }
-          placeholder="Provide your text"
-          size="small"
-        />
+        <div>
+          <InputLabel shrink htmlFor="search-input" className={s.inputLabelText}>
+            Search
+          </InputLabel>
+          <OutlinedInput
+            id="search-input"
+            onChange={searchHandler}
+            startAdornment={
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            }
+            placeholder="Provide your text"
+            size="small"
+          />
+        </div>
+        <div>
+          <InputLabel shrink htmlFor="show-packs" className={s.inputLabelText}>
+            Show packs cards
+          </InputLabel>
+          <ToggleButtonGroup
+            id="show-packs"
+            value={userIdForShowingMyPacks}
+            exclusive
+            onChange={showPacksCardsHandler}
+            size={"small"}
+            color={"primary"}
+          >
+            <ToggleButton value={userId}>My</ToggleButton>
+            <ToggleButton value="" aria-label="left aligned">
+              All
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </div>
+        <div>
+          <InputLabel shrink htmlFor="slider" className={s.inputLabelText}>
+            Show packs cards
+          </InputLabel>
+          <div className={s.sliderBlock} id={"slider"}>
+            <TextField
+              id="slider"
+              style={{ width: "75px", marginRight: "20px" }}
+              variant="outlined"
+              value={valueForSlider[0]}
+              size="small"
+              onChange={handleInputSliderChangeMin}
+              // onBlur={handleBlur}
+              inputProps={{
+                step: 1,
+                min: 0,
+                max: 75,
+                type: "number",
+              }}
+            />
+            <Box sx={{ width: 200 }}>
+              <Slider
+                value={valueForSlider}
+                onChange={sliderHandleChange1}
+                valueLabelDisplay="auto"
+                min={0}
+                step={1}
+                max={75}
+                // getAriaValueText={(value: number) => {
+                //   return `${value}°C`;
+                // }}
+                disableSwap
+              />
+            </Box>
+            <TextField
+              style={{ width: "75px", marginLeft: "20px" }}
+              variant="outlined"
+              value={valueForSlider[1]}
+              size="small"
+              onChange={handleInputSliderChangeMax}
+              // onBlur={handleBlur}
+              inputProps={{
+                step: 1,
+                min: 0,
+                max: 75,
+                type: "number",
+              }}
+            />
+          </div>
+        </div>
         {/*<TextField placeholder="Outlined" variant="outlined" id="search-input" />*/}
       </div>
       <TableContainer component={Paper}>
@@ -225,6 +358,7 @@ export default function BasicTable() {
           size="small"
           onChange={paginationChangedHandler}
           className={s.tablePagination}
+          page={page}
         />
         {/*<TablePagination*/}
         {/*  rowsPerPageOptions={[5, 10, 25]}*/}
