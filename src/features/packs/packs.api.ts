@@ -2,7 +2,7 @@ import { instance } from "common/api";
 
 export const packsApi = {
   getPacks(payload: any) {
-    return instance.get<any>("cards/pack", { params: payload });
+    return instance.get<ReturnGetPacksType>("cards/pack", { params: payload });
   },
 };
 
@@ -26,3 +26,11 @@ export type PackType = {
   _id: string;
 };
 export type PacksType = PackType[];
+export type ReturnGetPacksType = {
+  cardPacks: PacksType;
+  cardPacksTotalCount: number;
+  maxCardsCount: number;
+  minCardsCount: number;
+  page: number;
+  pageCount: number;
+};

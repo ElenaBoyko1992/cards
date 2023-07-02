@@ -1,30 +1,29 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAppAsyncThunk, thunkTryCatch } from "common/utils";
-import { packsApi, PacksType, PackType } from "features/packs/packs.api";
-import { ProfileType } from "features/auth/auth.api";
+import { packsApi, PacksType, ReturnGetPacksType } from "features/packs/packs.api";
 
-const getPacks = createAppAsyncThunk<{ packsItems: PacksType; cardPacksTotalCount: number }, any>(
-  "packs/getPacks",
-  async (arg, thunkAPI) => {
-    return thunkTryCatch(thunkAPI, async () => {
-      const res = await packsApi.getPacks(arg);
-
-      return { packsItems: res.data.cardPacks, cardPacksTotalCount: res.data.cardPacksTotalCount };
-    });
-  }
-);
+const getPacks = createAppAsyncThunk<{ packs: ReturnGetPacksType }, any>("packs/getPacks", async (arg, thunkAPI) => {
+  return thunkTryCatch(thunkAPI, async () => {
+    const res = await packsApi.getPacks(arg);
+    return { packs: res.data };
+  });
+});
 
 const slice = createSlice({
   name: "packs",
   initialState: {
     packsItems: [] as PacksType,
     cardPacksTotalCount: 0,
+    maxCardsCount: 0,
+    minCardsCount: 0,
   },
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getPacks.fulfilled, (state, action) => {
-      state.packsItems = action.payload.packsItems;
-      state.cardPacksTotalCount = action.payload.cardPacksTotalCount;
+      state.packsItems = action.payload.packs.cardPacks;
+      state.cardPacksTotalCount = action.payload.packs.cardPacksTotalCount;
+      state.maxCardsCount = action.payload.packs.maxCardsCount;
+      state.minCardsCount = action.payload.packs.minCardsCount;
     });
   },
 });

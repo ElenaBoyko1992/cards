@@ -47,6 +47,8 @@ export default function BasicTable() {
   const packs = useAppSelector((state) => state.packs.packsItems);
   const cardPacksTotalCount = useAppSelector((state) => state.packs.cardPacksTotalCount);
   const userId = useAppSelector((state) => (state.auth.profile ? state.auth.profile._id : ""));
+  const maxCardsCount = useAppSelector((state) => state.packs.maxCardsCount);
+  const minCardsCount = useAppSelector((state) => state.packs.minCardsCount);
   const rows = packs.map((pack) => {
     return createData(pack.name, pack.cardsCount, pack.updated, pack.created, "заглушка", pack._id);
   });
@@ -62,9 +64,13 @@ export default function BasicTable() {
   const [page, setPage] = React.useState(1);
   const [searchValue, setSearchValue] = useState<string>("");
   const [userIdForShowingMyPacks, setUserIdForShowingMyPacks] = useState("");
-  const debouncedValue = useDebounce<string>(searchValue, 500);
-  const [valueForSlider, setValueForSlider] = useState([0, 75]);
-  console.log("valueForSlider", valueForSlider);
+  const debouncedValueForSearch = useDebounce<string>(searchValue, 500);
+  const [valueForSlider, setValueForSlider] = useState<any>([0, 0]);
+  const debouncedValueForSliderMin = useDebounce<number>(valueForSlider[0], 500);
+  const debouncedValueForSliderMax = useDebounce<number>(valueForSlider[1], 500);
+  console.log(valueForSlider);
+  console.log("minCardsCount", minCardsCount);
+  console.log("maxCardsCount", maxCardsCount);
   const tablePaginationCount = useMemo(() => {
     return Math.ceil(cardPacksTotalCount / rowsPerPage);
   }, [cardPacksTotalCount, rowsPerPage]);
@@ -130,7 +136,6 @@ export default function BasicTable() {
     if (!Array.isArray(newValue)) {
       return;
     }
-
     if (activeThumb === 0) {
       setValueForSlider([Math.min(newValue[0], valueForSlider[1] - minDistance), valueForSlider[1]]);
     } else {
@@ -138,12 +143,17 @@ export default function BasicTable() {
     }
   };
 
-  const handleInputSliderChangeMin = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValueForSlider([event.target.value === "" ? 0 : Number(event.target.value), valueForSlider[1]]);
-  };
+  // const handleInputSliderChangeMin = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setValueForSlider([event.target.value === "" ? 0 : Number(event.target.value), valueForSlider[1]]);
+  // };
+  //
+  // const handleInputSliderChangeMax = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setValueForSlider([valueForSlider[0], event.target.value === "" ? 0 : Number(event.target.value)]);
+  // };
 
-  const handleInputSliderChangeMax = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValueForSlider([valueForSlider[0], event.target.value === "" ? 0 : Number(event.target.value)]);
+  const onSliderChangeHandler = (event: React.SyntheticEvent | Event, value: number | Array<number>) => {
+    console.log(value);
+    setValueForSlider(value);
   };
 
   useEffect(() => {
@@ -155,6 +165,8 @@ export default function BasicTable() {
           page,
           packName: searchValue,
           user_id: userIdForShowingMyPacks,
+          min: valueForSlider[0],
+          max: valueForSlider[1],
         })
       );
     } else if (cardsCountSortIsActive) {
@@ -165,6 +177,8 @@ export default function BasicTable() {
           page,
           packName: searchValue,
           user_id: userIdForShowingMyPacks,
+          min: valueForSlider[0],
+          max: valueForSlider[1],
         })
       );
     } else if (lastUpdatedSortIsActive) {
@@ -175,6 +189,8 @@ export default function BasicTable() {
           page,
           packName: searchValue,
           user_id: userIdForShowingMyPacks,
+          min: valueForSlider[0],
+          max: valueForSlider[1],
         })
       );
     } else if (createdSortIsActive) {
@@ -185,6 +201,8 @@ export default function BasicTable() {
           page,
           packName: searchValue,
           user_id: userIdForShowingMyPacks,
+          min: valueForSlider[0],
+          max: valueForSlider[1],
         })
       );
     } else {
@@ -194,6 +212,8 @@ export default function BasicTable() {
           page,
           packName: searchValue,
           user_id: userIdForShowingMyPacks,
+          min: valueForSlider[0],
+          max: valueForSlider[1],
         })
       );
     }
@@ -205,8 +225,10 @@ export default function BasicTable() {
     cardsCountSortIsActive,
     lastUpdatedSortIsActive,
     createdSortIsActive,
-    debouncedValue,
+    debouncedValueForSearch,
     userIdForShowingMyPacks,
+    debouncedValueForSliderMin,
+    debouncedValueForSliderMax,
   ]);
 
   return (
@@ -251,7 +273,7 @@ export default function BasicTable() {
             Show packs cards
           </InputLabel>
           <div className={s.sliderBlock} id={"slider"}>
-            <TextField
+            {/*            <TextField
               id="slider"
               style={{ width: "75px", marginRight: "20px" }}
               variant="outlined"
@@ -261,26 +283,27 @@ export default function BasicTable() {
               // onBlur={handleBlur}
               inputProps={{
                 step: 1,
-                min: 0,
-                max: 75,
+                min: minCardsCount,
+                max: maxCardsCount,
                 type: "number",
               }}
-            />
+            />*/}
             <Box sx={{ width: 200 }}>
               <Slider
                 value={valueForSlider}
                 onChange={sliderHandleChange1}
                 valueLabelDisplay="auto"
-                min={0}
+                min={minCardsCount}
+                max={maxCardsCount}
                 step={1}
-                max={75}
                 // getAriaValueText={(value: number) => {
                 //   return `${value}°C`;
                 // }}
                 disableSwap
+                // onChangeCommitted={onSliderChangeHandler}
               />
             </Box>
-            <TextField
+            {/*    <TextField
               style={{ width: "75px", marginLeft: "20px" }}
               variant="outlined"
               value={valueForSlider[1]}
@@ -289,11 +312,11 @@ export default function BasicTable() {
               // onBlur={handleBlur}
               inputProps={{
                 step: 1,
-                min: 0,
-                max: 75,
+                min: minCardsCount,
+                max: maxCardsCount,
                 type: "number",
               }}
-            />
+            />*/}
           </div>
         </div>
         {/*<TextField placeholder="Outlined" variant="outlined" id="search-input" />*/}
