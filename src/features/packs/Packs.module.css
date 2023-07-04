@@ -46,7 +46,12 @@
     align-items: center;
 }
 
-.sliderBlock{
+.filterSearch, .filterShowPacks, .filterSlider {
+    margin-right: 25px;
+}
+
+
+.sliderBlock {
     display: flex;
     align-items: center;
 }
@@ -56,4 +61,16 @@
     font-weight: 500;
     color: #000000;
     font-size: 14px;
+}
+
+.filterOffButton {
+    align-self: flex-end;
+}
+
+.filterOffButton button {
+    background-color: transparent;
+    border: 1px solid #bdbdbe;
+    border-radius: 3px;
+    height: 40px;
+    cursor: pointer;
 }

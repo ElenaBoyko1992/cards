@@ -11,7 +11,6 @@ import { useAppDispatch, useAppSelector } from "common/hooks";
 import { packsThunks } from "features/packs/packs.slice";
 import {
   Box,
-  Input,
   InputAdornment,
   InputLabel,
   MenuItem,
@@ -28,6 +27,7 @@ import {
 import s from "./Packs.module.css";
 import SearchIcon from "@mui/icons-material/Search";
 import { useDebounce } from "common/hooks/useDebounce";
+import FilterAltOffOutlinedIcon from "@mui/icons-material/FilterAltOffOutlined";
 
 function createData(name: string, cardsCount: number, updated: string, created: string, actions: string, id: string) {
   return { name, cardsCount, updated, created, actions, id };
@@ -61,13 +61,20 @@ export default function BasicTable() {
   const [lastUpdatedSortIsActive, setLastUpdatedSortIsActive] = useState(false);
   const [createdSortIsActive, setCreatedSortIsActive] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [page, setPage] = React.useState(1);
+  const [page, setPage] = useState(1);
   const [searchValue, setSearchValue] = useState<string>("");
   const [userIdForShowingMyPacks, setUserIdForShowingMyPacks] = useState("");
-  const debouncedValueForSearch = useDebounce<string>(searchValue, 500);
   const [valueForSlider, setValueForSlider] = useState<any>([0, 0]);
+
+  const debouncedValueForSearch = useDebounce<string>(searchValue, 500);
   const debouncedValueForSliderMin = useDebounce<number>(valueForSlider[0], 500);
   const debouncedValueForSliderMax = useDebounce<number>(valueForSlider[1], 500);
+  const debouncedUserIdForShowingMyPacks = useDebounce<string>(userIdForShowingMyPacks, 500);
+  const debouncedNameSortIsActive = useDebounce<boolean>(nameSortIsActive, 500);
+  const debouncedCardsCountSortIsActive = useDebounce<boolean>(cardsCountSortIsActive, 500);
+  const debouncedLastUpdatedSortIsActive = useDebounce<boolean>(lastUpdatedSortIsActive, 500);
+  const debouncedCreatedSortIsActive = useDebounce<boolean>(createdSortIsActive, 500);
+
   console.log(valueForSlider);
   console.log("minCardsCount", minCardsCount);
   console.log("maxCardsCount", maxCardsCount);
@@ -123,12 +130,10 @@ export default function BasicTable() {
 
   const searchHandler = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     setSearchValue(event.target.value);
-    setPage(1);
   };
 
   const showPacksCardsHandler = (event: React.MouseEvent<HTMLElement>, newAlignment: string) => {
     setUserIdForShowingMyPacks(newAlignment);
-    setPage(1);
   };
 
   const minDistance = 1;
@@ -143,17 +148,34 @@ export default function BasicTable() {
     }
   };
 
-  // const handleInputSliderChangeMin = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setValueForSlider([event.target.value === "" ? 0 : Number(event.target.value), valueForSlider[1]]);
-  // };
+  const handleInputSliderChangeMin = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (+event.target.value <= valueForSlider[1] - minDistance) {
+      setValueForSlider([Number(event.target.value), valueForSlider[1]]);
+      setPage(1);
+    } else {
+    }
+  };
   //
-  // const handleInputSliderChangeMax = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setValueForSlider([valueForSlider[0], event.target.value === "" ? 0 : Number(event.target.value)]);
+  const handleInputSliderChangeMax = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (+event.target.value >= valueForSlider[0] + minDistance) {
+      setValueForSlider([valueForSlider[0], Number(event.target.value)]);
+      setPage(1);
+    }
+  };
+
+  // const onSliderChangeHandler = (event: React.SyntheticEvent | Event, value: number | Array<number>) => {
+  //   console.log(value);
+  //   setValueForSlider(value);
   // };
 
-  const onSliderChangeHandler = (event: React.SyntheticEvent | Event, value: number | Array<number>) => {
-    console.log(value);
-    setValueForSlider(value);
+  const removeAllFilters = () => {
+    setSearchValue("");
+    setUserIdForShowingMyPacks("");
+    setValueForSlider([0, 0]);
+    setNameSortIsActive(false);
+    setCardsCountSortIsActive(false);
+    setLastUpdatedSortIsActive(false);
+    setCreatedSortIsActive(false);
   };
 
   useEffect(() => {
@@ -221,20 +243,20 @@ export default function BasicTable() {
     page,
     rowsPerPage,
     orderBy,
-    nameSortIsActive,
-    cardsCountSortIsActive,
-    lastUpdatedSortIsActive,
-    createdSortIsActive,
+    debouncedNameSortIsActive,
+    debouncedCardsCountSortIsActive,
+    debouncedLastUpdatedSortIsActive,
+    debouncedCreatedSortIsActive,
     debouncedValueForSearch,
-    userIdForShowingMyPacks,
     debouncedValueForSliderMin,
     debouncedValueForSliderMax,
+    debouncedUserIdForShowingMyPacks,
   ]);
 
   return (
     <>
       <div className={s.tableFilters}>
-        <div>
+        <div className={s.filterSearch}>
           <InputLabel shrink htmlFor="search-input" className={s.inputLabelText}>
             Search
           </InputLabel>
@@ -248,9 +270,10 @@ export default function BasicTable() {
             }
             placeholder="Provide your text"
             size="small"
+            value={searchValue}
           />
         </div>
-        <div>
+        <div className={s.filterShowPacks}>
           <InputLabel shrink htmlFor="show-packs" className={s.inputLabelText}>
             Show packs cards
           </InputLabel>
@@ -262,18 +285,20 @@ export default function BasicTable() {
             size={"small"}
             color={"primary"}
           >
-            <ToggleButton value={userId}>My</ToggleButton>
-            <ToggleButton value="" aria-label="left aligned">
+            <ToggleButton value={userId} style={{ width: "100px" }}>
+              My
+            </ToggleButton>
+            <ToggleButton value="" aria-label="left aligned" style={{ width: "100px" }}>
               All
             </ToggleButton>
           </ToggleButtonGroup>
         </div>
-        <div>
+        <div className={s.filterSlider}>
           <InputLabel shrink htmlFor="slider" className={s.inputLabelText}>
-            Show packs cards
+            Number of cards
           </InputLabel>
           <div className={s.sliderBlock} id={"slider"}>
-            {/*            <TextField
+            <TextField
               id="slider"
               style={{ width: "75px", marginRight: "20px" }}
               variant="outlined"
@@ -287,7 +312,7 @@ export default function BasicTable() {
                 max: maxCardsCount,
                 type: "number",
               }}
-            />*/}
+            />
             <Box sx={{ width: 200 }}>
               <Slider
                 value={valueForSlider}
@@ -303,7 +328,7 @@ export default function BasicTable() {
                 // onChangeCommitted={onSliderChangeHandler}
               />
             </Box>
-            {/*    <TextField
+            <TextField
               style={{ width: "75px", marginLeft: "20px" }}
               variant="outlined"
               value={valueForSlider[1]}
@@ -316,8 +341,13 @@ export default function BasicTable() {
                 max: maxCardsCount,
                 type: "number",
               }}
-            />*/}
+            />
           </div>
+        </div>
+        <div className={s.filterOffButton}>
+          <button onClick={removeAllFilters}>
+            <FilterAltOffOutlinedIcon fontSize={"large"} color={"primary"} />
+          </button>
         </div>
         {/*<TextField placeholder="Outlined" variant="outlined" id="search-input" />*/}
       </div>
