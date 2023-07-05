@@ -28,6 +28,7 @@ import s from "./Packs.module.css";
 import SearchIcon from "@mui/icons-material/Search";
 import { useDebounce } from "common/hooks/useDebounce";
 import FilterAltOffOutlinedIcon from "@mui/icons-material/FilterAltOffOutlined";
+import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 
 function createData(name: string, cardsCount: number, updated: string, created: string, actions: string, id: string) {
   return { name, cardsCount, updated, created, actions, id };
