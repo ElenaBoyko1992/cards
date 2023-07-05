@@ -74,3 +74,21 @@
     height: 40px;
     cursor: pointer;
 }
+
+.tableSellActions {
+    width: 115px;
+
+}
+
+.tableSellIcons > * {
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.packsNotFound {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+}

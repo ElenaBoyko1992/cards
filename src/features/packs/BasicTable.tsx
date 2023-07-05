@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from "common/hooks";
 import { packsThunks } from "features/packs/packs.slice";
 import {
   Box,
+  buttonClasses,
   InputAdornment,
   InputLabel,
   MenuItem,
@@ -29,6 +30,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import { useDebounce } from "common/hooks/useDebounce";
 import FilterAltOffOutlinedIcon from "@mui/icons-material/FilterAltOffOutlined";
 import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
+import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
 function createData(name: string, cardsCount: number, updated: string, created: string, actions: string, id: string) {
   return { name, cardsCount, updated, created, actions, id };
@@ -352,91 +355,120 @@ export default function BasicTable() {
         </div>
         {/*<TextField placeholder="Outlined" variant="outlined" id="search-input" />*/}
       </div>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                Name
-                <TableSortLabel
-                  active={nameSortIsActive}
-                  direction={orderBy}
-                  onClick={sortByNameHandler}
-                ></TableSortLabel>
-              </TableCell>
-              <TableCell>
-                Cards
-                <TableSortLabel
-                  active={cardsCountSortIsActive}
-                  direction={orderBy}
-                  onClick={sortByCardsCountHandler}
-                ></TableSortLabel>
-              </TableCell>
-              <TableCell>
-                Last Updated
-                <TableSortLabel
-                  active={lastUpdatedSortIsActive}
-                  direction={orderBy}
-                  onClick={sortByLastUpdatedHandler}
-                ></TableSortLabel>
-              </TableCell>
-              <TableCell>
-                Created by
-                <TableSortLabel
-                  active={createdSortIsActive}
-                  direction={orderBy}
-                  onClick={sortByCreatedHandler}
-                ></TableSortLabel>
-              </TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.cardsCount}</TableCell>
-                <TableCell>{row.updated}</TableCell>
-                <TableCell>{row.created}</TableCell>
-                <TableCell>{row.actions}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <div className={s.paginationBlock}>
-        <Pagination
-          count={tablePaginationCount}
-          color="primary"
-          shape="rounded"
-          size="small"
-          onChange={paginationChangedHandler}
-          className={s.tablePagination}
-          page={page}
-        />
-        {/*<TablePagination*/}
-        {/*  rowsPerPageOptions={[5, 10, 25]}*/}
-        {/*  component="div"*/}
-        {/*  count={tablePaginationCount}*/}
-        {/*  rowsPerPage={rowsPerPage}*/}
-        {/*  page={page}*/}
-        {/*  onPageChange={() => {}}*/}
-        {/*  onRowsPerPageChange={handleChangeRowsPerPage}*/}
-        {/*  labelRowsPerPage={"Show"}*/}
-        {/*/>*/}
-        <span>Show</span>
-        <Select
-          value={rowsPerPage.toString()}
-          onChange={handleChangeRowsPerPage}
-          className={s.tableSelectRowPerPage}
-          size="small"
-        >
-          <MenuItem value={5}>5</MenuItem>
-          <MenuItem value={10}>10</MenuItem>
-          <MenuItem value={25}>25</MenuItem>
-        </Select>
-        <span>Cards per page</span>
-      </div>
+
+      {rows.length ? (
+        <div>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    Name
+                    <TableSortLabel
+                      active={nameSortIsActive}
+                      direction={orderBy}
+                      onClick={sortByNameHandler}
+                    ></TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                    Cards
+                    <TableSortLabel
+                      active={cardsCountSortIsActive}
+                      direction={orderBy}
+                      onClick={sortByCardsCountHandler}
+                    ></TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                    Last Updated
+                    <TableSortLabel
+                      active={lastUpdatedSortIsActive}
+                      direction={orderBy}
+                      onClick={sortByLastUpdatedHandler}
+                    ></TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                    Created by
+                    <TableSortLabel
+                      active={createdSortIsActive}
+                      direction={orderBy}
+                      onClick={sortByCreatedHandler}
+                    ></TableSortLabel>
+                  </TableCell>
+                  <TableCell>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => (
+                  <TableRow key={row.id}>
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>{row.cardsCount}</TableCell>
+                    <TableCell>{row.updated}</TableCell>
+                    <TableCell>{row.created}</TableCell>
+                    <TableCell>
+                      <div className={s.tableSellActions}>
+                        {row.id === userId ? (
+                          <div className={s.tableSellIcons}>
+                            <button disabled={!row.cardsCount}>
+                              <SchoolOutlinedIcon />
+                            </button>
+                            <button>
+                              <BorderColorOutlinedIcon />
+                            </button>
+                            <button>
+                              <DeleteOutlineOutlinedIcon />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className={s.tableSellIcons}>
+                            <button disabled={!row.cardsCount}>
+                              <SchoolOutlinedIcon />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <div className={s.paginationBlock}>
+            <Pagination
+              count={tablePaginationCount}
+              color="primary"
+              shape="rounded"
+              size="small"
+              onChange={paginationChangedHandler}
+              className={s.tablePagination}
+              page={page}
+            />
+            {/*<TablePagination*/}
+            {/*  rowsPerPageOptions={[5, 10, 25]}*/}
+            {/*  component="div"*/}
+            {/*  count={tablePaginationCount}*/}
+            {/*  rowsPerPage={rowsPerPage}*/}
+            {/*  page={page}*/}
+            {/*  onPageChange={() => {}}*/}
+            {/*  onRowsPerPageChange={handleChangeRowsPerPage}*/}
+            {/*  labelRowsPerPage={"Show"}*/}
+            {/*/>*/}
+            <span>Show</span>
+            <Select
+              value={rowsPerPage.toString()}
+              onChange={handleChangeRowsPerPage}
+              className={s.tableSelectRowPerPage}
+              size="small"
+            >
+              <MenuItem value={5}>5</MenuItem>
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={25}>25</MenuItem>
+            </Select>
+            <span>Cards per page</span>
+          </div>
+        </div>
+      ) : (
+        <div className={s.packsNotFound}>Колоды не найдены. Измените параметры запроса.</div>
+      )}
     </>
   );
 }
