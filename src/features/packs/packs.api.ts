@@ -1,8 +1,14 @@
 import { instance } from "common/api";
 
 export const packsApi = {
-  getPacks(payload: any) {
+  getPacks(payload: ArgGetPacksType) {
     return instance.get<ReturnGetPacksType>("cards/pack", { params: payload });
+  },
+  createPack(payload: ArgCreatePackType) {
+    return instance.post("cards/pack", { cardsPack: payload });
+  },
+  deletePack(payload: { id: string }) {
+    return instance.delete("cards/pack", { params: payload });
   },
 };
 
@@ -33,4 +39,19 @@ export type ReturnGetPacksType = {
   minCardsCount: number;
   page: number;
   pageCount: number;
+};
+export type ArgGetPacksType = {
+  packName?: string;
+  min?: number;
+  max?: number;
+  sortPacks?: string;
+  page?: number;
+  pageCount?: number;
+  user_id?: string;
+  block?: boolean;
+};
+export type ArgCreatePackType = {
+  name?: string;
+  deckCover?: string;
+  private?: boolean;
 };

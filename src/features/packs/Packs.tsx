@@ -4,13 +4,19 @@ import s from "./Packs.module.css";
 import EnhancedTable from "features/packs/EnhancedTable";
 import DataGridTable from "features/packs/DataGridTable";
 import BasicTable from "features/packs/BasicTable";
+import { useAppDispatch } from "common/hooks";
+import { packsThunks } from "features/packs/packs.slice";
 
 export const Packs = () => {
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   //
   // useEffect(() => {
   //   dispatch(packsThunks.getPacks());
   // }, []);
+
+  const addNewPackPressHandler = () => {
+    dispatch(packsThunks.createPack({}));
+  };
 
   return (
     <div className={s.packsContainer}>
@@ -26,6 +32,7 @@ export const Packs = () => {
             fontSize: "16px",
             padding: "8px 28px",
           }}
+          onClick={addNewPackPressHandler}
         >
           Add new pack
         </Button>

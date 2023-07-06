@@ -8,10 +8,9 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useAppDispatch, useAppSelector } from "common/hooks";
-import { packsThunks } from "features/packs/packs.slice";
+import { packsThunks, setPageAction, setRowsPerPage } from "features/packs/packs.slice";
 import {
   Box,
-  buttonClasses,
   InputAdornment,
   InputLabel,
   MenuItem,
@@ -32,18 +31,7 @@ import FilterAltOffOutlinedIcon from "@mui/icons-material/FilterAltOffOutlined";
 import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-
-function createData(name: string, cardsCount: number, updated: string, created: string, actions: string, id: string) {
-  return { name, cardsCount, updated, created, actions, id };
-}
-
-// const rows = [
-//   createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-//   createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-//   createData("Eclair", 262, 16.0, 24, 6.0),
-//   createData("Cupcake", 305, 3.7, 67, 4.3),
-//   createData("Gingerbread", 356, 16.0, 49, 3.9),
-// ];
+import { createData } from "common/utils/createData";
 
 export default function BasicTable() {
   console.log("перерисовка");
@@ -53,35 +41,32 @@ export default function BasicTable() {
   const userId = useAppSelector((state) => (state.auth.profile ? state.auth.profile._id : ""));
   const maxCardsCount = useAppSelector((state) => state.packs.maxCardsCount);
   const minCardsCount = useAppSelector((state) => state.packs.minCardsCount);
+  const page = useAppSelector((state) => state.packs.page);
+  const rowsPerPage = useAppSelector((state) => state.packs.rowsPerPage);
   const rows = packs.map((pack) => {
-    return createData(pack.name, pack.cardsCount, pack.updated, pack.created, "заглушка", pack._id);
+    return createData(pack.name, pack.cardsCount, pack.updated, pack.created, pack._id, pack.user_id);
   });
 
   const [orderBy, setOrderBy] = useState<Order>("asc"); //1 - ask, 0 - desk
-  const sortNumber = orderBy === "asc" ? "1" : "0";
+  const sortNumber = orderBy === "asc" ? "0" : "1";
 
   const [nameSortIsActive, setNameSortIsActive] = useState(false);
   const [cardsCountSortIsActive, setCardsCountSortIsActive] = useState(false);
   const [lastUpdatedSortIsActive, setLastUpdatedSortIsActive] = useState(false);
   const [createdSortIsActive, setCreatedSortIsActive] = useState(false);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [page, setPage] = useState(1);
+  // const [rowsPerPage, setRowsPerPage] = useState(5);
+  // const [page, setPage] = useState(1);
   const [searchValue, setSearchValue] = useState<string>("");
   const [userIdForShowingMyPacks, setUserIdForShowingMyPacks] = useState("");
   const [valueForSlider, setValueForSlider] = useState<any>([0, 0]);
+  const [sortPacks, setSortPacks] = useState("");
 
   const debouncedValueForSearch = useDebounce<string>(searchValue, 500);
   const debouncedValueForSliderMin = useDebounce<number>(valueForSlider[0], 500);
   const debouncedValueForSliderMax = useDebounce<number>(valueForSlider[1], 500);
   const debouncedUserIdForShowingMyPacks = useDebounce<string>(userIdForShowingMyPacks, 500);
-  const debouncedNameSortIsActive = useDebounce<boolean>(nameSortIsActive, 500);
-  const debouncedCardsCountSortIsActive = useDebounce<boolean>(cardsCountSortIsActive, 500);
-  const debouncedLastUpdatedSortIsActive = useDebounce<boolean>(lastUpdatedSortIsActive, 500);
-  const debouncedCreatedSortIsActive = useDebounce<boolean>(createdSortIsActive, 500);
+  const debouncedPageNumber = useDebounce<number>(page, 500);
 
-  console.log(valueForSlider);
-  console.log("minCardsCount", minCardsCount);
-  console.log("maxCardsCount", maxCardsCount);
   const tablePaginationCount = useMemo(() => {
     return Math.ceil(cardPacksTotalCount / rowsPerPage);
   }, [cardPacksTotalCount, rowsPerPage]);
@@ -91,8 +76,8 @@ export default function BasicTable() {
     setLastUpdatedSortIsActive(false);
     setCreatedSortIsActive(false);
     setNameSortIsActive(true);
-    // await dispatch(packsThunks.getPacks({ sortPacks: `${sortNumber}name`, pageCount: rowsPerPage, page }));
     setOrderBy(orderBy === "asc" ? "desc" : "asc");
+    setSortPacks(`${sortNumber}name`);
   };
 
   const sortByCardsCountHandler = async () => {
@@ -101,8 +86,7 @@ export default function BasicTable() {
     setCreatedSortIsActive(false);
     setCardsCountSortIsActive(true);
     setOrderBy(orderBy === "asc" ? "desc" : "asc");
-
-    //await dispatch(packsThunks.getPacks({ sortPacks: `${sortNumber}cardsCount`, pageCount: rowsPerPage, page }));
+    setSortPacks(`${sortNumber}cardsCount`);
   };
 
   const sortByLastUpdatedHandler = async () => {
@@ -110,8 +94,8 @@ export default function BasicTable() {
     setCardsCountSortIsActive(false);
     setCreatedSortIsActive(false);
     setLastUpdatedSortIsActive(true);
-    // await dispatch(packsThunks.getPacks({ sortPacks: `${sortNumber}updated`, pageCount: rowsPerPage, page }));
     setOrderBy(orderBy === "asc" ? "desc" : "asc");
+    setSortPacks(`${sortNumber}updated`);
   };
 
   const sortByCreatedHandler = async () => {
@@ -119,17 +103,17 @@ export default function BasicTable() {
     setCardsCountSortIsActive(false);
     setLastUpdatedSortIsActive(false);
     setCreatedSortIsActive(true);
-    // await dispatch(packsThunks.getPacks({ sortPacks: `${sortNumber}created`, pageCount: rowsPerPage, page }));
     setOrderBy(orderBy === "asc" ? "desc" : "asc");
+    setSortPacks(`${sortNumber}created`);
   };
 
   const handleChangeRowsPerPage = (event: SelectChangeEvent) => {
-    setRowsPerPage(parseInt(event.target.value, 10) as number);
-    setPage(1);
+    dispatch(setRowsPerPage({ rowsPerPage: parseInt(event.target.value, 10) as number }));
+    dispatch(setPageAction({ pageNumber: 1 }));
   };
 
   const paginationChangedHandler = async (event: React.ChangeEvent<unknown>, page: number) => {
-    setPage(page);
+    dispatch(setPageAction({ pageNumber: page }));
   };
 
   const searchHandler = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -155,22 +139,17 @@ export default function BasicTable() {
   const handleInputSliderChangeMin = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (+event.target.value <= valueForSlider[1] - minDistance) {
       setValueForSlider([Number(event.target.value), valueForSlider[1]]);
-      setPage(1);
+      dispatch(setPageAction({ pageNumber: 1 }));
     } else {
     }
   };
-  //
+
   const handleInputSliderChangeMax = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (+event.target.value >= valueForSlider[0] + minDistance) {
       setValueForSlider([valueForSlider[0], Number(event.target.value)]);
-      setPage(1);
+      dispatch(setPageAction({ pageNumber: 1 }));
     }
   };
-
-  // const onSliderChangeHandler = (event: React.SyntheticEvent | Event, value: number | Array<number>) => {
-  //   console.log(value);
-  //   setValueForSlider(value);
-  // };
 
   const removeAllFilters = () => {
     setSearchValue("");
@@ -180,77 +159,30 @@ export default function BasicTable() {
     setCardsCountSortIsActive(false);
     setLastUpdatedSortIsActive(false);
     setCreatedSortIsActive(false);
+    setSortPacks("");
+    dispatch(setPageAction({ pageNumber: 1 }));
+  };
+
+  const deletePackHandler = (id: string) => {
+    dispatch(packsThunks.deletePack({ id }));
   };
 
   useEffect(() => {
-    if (nameSortIsActive) {
-      dispatch(
-        packsThunks.getPacks({
-          sortPacks: `${sortNumber}name`,
-          pageCount: rowsPerPage,
-          page,
-          packName: searchValue,
-          user_id: userIdForShowingMyPacks,
-          min: valueForSlider[0],
-          max: valueForSlider[1],
-        })
-      );
-    } else if (cardsCountSortIsActive) {
-      dispatch(
-        packsThunks.getPacks({
-          sortPacks: `${sortNumber}cardsCount`,
-          pageCount: rowsPerPage,
-          page,
-          packName: searchValue,
-          user_id: userIdForShowingMyPacks,
-          min: valueForSlider[0],
-          max: valueForSlider[1],
-        })
-      );
-    } else if (lastUpdatedSortIsActive) {
-      dispatch(
-        packsThunks.getPacks({
-          sortPacks: `${sortNumber}updated`,
-          pageCount: rowsPerPage,
-          page,
-          packName: searchValue,
-          user_id: userIdForShowingMyPacks,
-          min: valueForSlider[0],
-          max: valueForSlider[1],
-        })
-      );
-    } else if (createdSortIsActive) {
-      dispatch(
-        packsThunks.getPacks({
-          sortPacks: `${sortNumber}created`,
-          pageCount: rowsPerPage,
-          page,
-          packName: searchValue,
-          user_id: userIdForShowingMyPacks,
-          min: valueForSlider[0],
-          max: valueForSlider[1],
-        })
-      );
-    } else {
-      dispatch(
-        packsThunks.getPacks({
-          pageCount: rowsPerPage,
-          page,
-          packName: searchValue,
-          user_id: userIdForShowingMyPacks,
-          min: valueForSlider[0],
-          max: valueForSlider[1],
-        })
-      );
-    }
+    dispatch(
+      packsThunks.getPacks({
+        pageCount: rowsPerPage,
+        page,
+        packName: searchValue,
+        user_id: userIdForShowingMyPacks,
+        min: valueForSlider[0],
+        max: valueForSlider[1],
+        sortPacks,
+      })
+    );
   }, [
-    page,
+    debouncedPageNumber,
     rowsPerPage,
     orderBy,
-    debouncedNameSortIsActive,
-    debouncedCardsCountSortIsActive,
-    debouncedLastUpdatedSortIsActive,
-    debouncedCreatedSortIsActive,
     debouncedValueForSearch,
     debouncedValueForSliderMin,
     debouncedValueForSliderMax,
@@ -353,7 +285,6 @@ export default function BasicTable() {
             <FilterAltOffOutlinedIcon fontSize={"large"} color={"primary"} />
           </button>
         </div>
-        {/*<TextField placeholder="Outlined" variant="outlined" id="search-input" />*/}
       </div>
 
       {rows.length ? (
@@ -399,14 +330,14 @@ export default function BasicTable() {
               </TableHead>
               <TableBody>
                 {rows.map((row) => (
-                  <TableRow key={row.id}>
+                  <TableRow key={row.packId}>
                     <TableCell>{row.name}</TableCell>
                     <TableCell>{row.cardsCount}</TableCell>
                     <TableCell>{row.updated}</TableCell>
                     <TableCell>{row.created}</TableCell>
                     <TableCell>
                       <div className={s.tableSellActions}>
-                        {row.id === userId ? (
+                        {row.userId === userId ? (
                           <div className={s.tableSellIcons}>
                             <button disabled={!row.cardsCount}>
                               <SchoolOutlinedIcon />
@@ -414,7 +345,7 @@ export default function BasicTable() {
                             <button>
                               <BorderColorOutlinedIcon />
                             </button>
-                            <button>
+                            <button onClick={() => deletePackHandler(row.packId)}>
                               <DeleteOutlineOutlinedIcon />
                             </button>
                           </div>
@@ -442,16 +373,6 @@ export default function BasicTable() {
               className={s.tablePagination}
               page={page}
             />
-            {/*<TablePagination*/}
-            {/*  rowsPerPageOptions={[5, 10, 25]}*/}
-            {/*  component="div"*/}
-            {/*  count={tablePaginationCount}*/}
-            {/*  rowsPerPage={rowsPerPage}*/}
-            {/*  page={page}*/}
-            {/*  onPageChange={() => {}}*/}
-            {/*  onRowsPerPageChange={handleChangeRowsPerPage}*/}
-            {/*  labelRowsPerPage={"Show"}*/}
-            {/*/>*/}
             <span>Show</span>
             <Select
               value={rowsPerPage.toString()}
