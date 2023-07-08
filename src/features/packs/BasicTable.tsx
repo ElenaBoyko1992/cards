@@ -8,7 +8,15 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useAppDispatch, useAppSelector } from "common/hooks";
-import { packsThunks, setPageAction, setRowsPerPage } from "features/packs/packs.slice";
+import {
+  packsThunks,
+  removeAllFilters,
+  setPageAction,
+  setRowsPerPage,
+  setSearchValue,
+  setUserIdForShowingMyPacks,
+  sortBy,
+} from "features/packs/packs.slice";
 import {
   Box,
   InputAdornment,
@@ -43,68 +51,83 @@ export default function BasicTable() {
   const minCardsCount = useAppSelector((state) => state.packs.minCardsCount);
   const page = useAppSelector((state) => state.packs.page);
   const rowsPerPage = useAppSelector((state) => state.packs.rowsPerPage);
+  const searchValue = useAppSelector((state) => state.packs.searchValue);
+  const userIdForShowingMyPacks = useAppSelector((state) => state.packs.userIdForShowingMyPacks);
+  const sortPacks = useAppSelector((state) => state.packs.sortPacks);
+  const orderBy = useAppSelector((state) => state.packs.orderBy);
+  const nameSortIsActive = useAppSelector((state) => state.packs.nameSortIsActive);
+  const cardsCountSortIsActive = useAppSelector((state) => state.packs.cardsCountSortIsActive);
+  const lastUpdatedSortIsActive = useAppSelector((state) => state.packs.lastUpdatedSortIsActive);
+  const createdSortIsActive = useAppSelector((state) => state.packs.createdSortIsActive);
+
   const rows = packs.map((pack) => {
     return createData(pack.name, pack.cardsCount, pack.updated, pack.created, pack._id, pack.user_id);
   });
 
-  const [orderBy, setOrderBy] = useState<Order>("asc"); //1 - ask, 0 - desk
-  const sortNumber = orderBy === "asc" ? "0" : "1";
+  // const [orderBy, setOrderBy] = useState<Order>("asc"); //1 - ask, 0 - desk
+  // const sortNumber = orderBy === "asc" ? "0" : "1";
 
-  const [nameSortIsActive, setNameSortIsActive] = useState(false);
-  const [cardsCountSortIsActive, setCardsCountSortIsActive] = useState(false);
-  const [lastUpdatedSortIsActive, setLastUpdatedSortIsActive] = useState(false);
-  const [createdSortIsActive, setCreatedSortIsActive] = useState(false);
+  // const [nameSortIsActive, setNameSortIsActive] = useState(false);
+  // const [cardsCountSortIsActive, setCardsCountSortIsActive] = useState(false);
+  // const [lastUpdatedSortIsActive, setLastUpdatedSortIsActive] = useState(false);
+  // const [createdSortIsActive, setCreatedSortIsActive] = useState(false);
+
   // const [rowsPerPage, setRowsPerPage] = useState(5);
   // const [page, setPage] = useState(1);
-  const [searchValue, setSearchValue] = useState<string>("");
-  const [userIdForShowingMyPacks, setUserIdForShowingMyPacks] = useState("");
+  // const [searchValue, setSearchValue] = useState<string>("");
+  // const [userIdForShowingMyPacks, setUserIdForShowingMyPacks] = useState("");
   const [valueForSlider, setValueForSlider] = useState<any>([0, 0]);
-  const [sortPacks, setSortPacks] = useState("");
+  // const [sortPacks, setSortPacks] = useState("");
 
   const debouncedValueForSearch = useDebounce<string>(searchValue, 500);
   const debouncedValueForSliderMin = useDebounce<number>(valueForSlider[0], 500);
   const debouncedValueForSliderMax = useDebounce<number>(valueForSlider[1], 500);
   const debouncedUserIdForShowingMyPacks = useDebounce<string>(userIdForShowingMyPacks, 500);
   const debouncedPageNumber = useDebounce<number>(page, 500);
+  const debouncedOrderBy = useDebounce<string>(orderBy, 500);
 
   const tablePaginationCount = useMemo(() => {
     return Math.ceil(cardPacksTotalCount / rowsPerPage);
   }, [cardPacksTotalCount, rowsPerPage]);
 
   const sortByNameHandler = async () => {
-    setCardsCountSortIsActive(false);
-    setLastUpdatedSortIsActive(false);
-    setCreatedSortIsActive(false);
-    setNameSortIsActive(true);
-    setOrderBy(orderBy === "asc" ? "desc" : "asc");
-    setSortPacks(`${sortNumber}name`);
+    dispatch(sortBy({ sortType: "name" }));
+    // setCardsCountSortIsActive(false);
+    // setLastUpdatedSortIsActive(false);
+    // setCreatedSortIsActive(false);
+    // setNameSortIsActive(true);
+    // setOrderBy(orderBy === "asc" ? "desc" : "asc");
+    // setSortPacks(`${sortNumber}name`);
   };
 
   const sortByCardsCountHandler = async () => {
-    setNameSortIsActive(false);
-    setLastUpdatedSortIsActive(false);
-    setCreatedSortIsActive(false);
-    setCardsCountSortIsActive(true);
-    setOrderBy(orderBy === "asc" ? "desc" : "asc");
-    setSortPacks(`${sortNumber}cardsCount`);
+    dispatch(sortBy({ sortType: "cardsCount" }));
+    // setNameSortIsActive(false);
+    // setLastUpdatedSortIsActive(false);
+    // setCreatedSortIsActive(false);
+    // setCardsCountSortIsActive(true);
+    // setOrderBy(orderBy === "asc" ? "desc" : "asc");
+    // setSortPacks(`${sortNumber}cardsCount`);
   };
 
   const sortByLastUpdatedHandler = async () => {
-    setNameSortIsActive(false);
-    setCardsCountSortIsActive(false);
-    setCreatedSortIsActive(false);
-    setLastUpdatedSortIsActive(true);
-    setOrderBy(orderBy === "asc" ? "desc" : "asc");
-    setSortPacks(`${sortNumber}updated`);
+    dispatch(sortBy({ sortType: "updated" }));
+    // setNameSortIsActive(false);
+    // setCardsCountSortIsActive(false);
+    // setCreatedSortIsActive(false);
+    // setLastUpdatedSortIsActive(true);
+    // setOrderBy(orderBy === "asc" ? "desc" : "asc");
+    // setSortPacks(`${sortNumber}updated`);
   };
 
   const sortByCreatedHandler = async () => {
-    setNameSortIsActive(false);
-    setCardsCountSortIsActive(false);
-    setLastUpdatedSortIsActive(false);
-    setCreatedSortIsActive(true);
-    setOrderBy(orderBy === "asc" ? "desc" : "asc");
-    setSortPacks(`${sortNumber}created`);
+    dispatch(sortBy({ sortType: "created" }));
+    // setNameSortIsActive(false);
+    // setCardsCountSortIsActive(false);
+    // setLastUpdatedSortIsActive(false);
+    // setCreatedSortIsActive(true);
+    // setOrderBy(orderBy === "asc" ? "desc" : "asc");
+    // setSortPacks(`${sortNumber}created`);
   };
 
   const handleChangeRowsPerPage = (event: SelectChangeEvent) => {
@@ -117,11 +140,11 @@ export default function BasicTable() {
   };
 
   const searchHandler = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    setSearchValue(event.target.value);
+    dispatch(setSearchValue({ searchValue: event.target.value }));
   };
 
   const showPacksCardsHandler = (event: React.MouseEvent<HTMLElement>, newAlignment: string) => {
-    setUserIdForShowingMyPacks(newAlignment);
+    dispatch(setUserIdForShowingMyPacks({ userIdForShowingMyPacks: newAlignment }));
   };
 
   const minDistance = 1;
@@ -151,16 +174,20 @@ export default function BasicTable() {
     }
   };
 
-  const removeAllFilters = () => {
-    setSearchValue("");
-    setUserIdForShowingMyPacks("");
-    setValueForSlider([0, 0]);
-    setNameSortIsActive(false);
-    setCardsCountSortIsActive(false);
-    setLastUpdatedSortIsActive(false);
-    setCreatedSortIsActive(false);
-    setSortPacks("");
-    dispatch(setPageAction({ pageNumber: 1 }));
+  // временно закомментирована, потом вернуть!
+  const removeAllFiltersHandler = () => {
+    //    setValueForSlider([0, 0]); - доработать в action removeAllFiltersHandler, когда перенесу setValueForSlider в bll
+
+    dispatch(removeAllFilters());
+
+    // dispatch(setSearchValue({ searchValue: "" }));
+    // dispatch(setUserIdForShowingMyPacks({ userIdForShowingMyPacks: "" }));
+    // setNameSortIsActive(false);
+    // setCardsCountSortIsActive(false);
+    // setLastUpdatedSortIsActive(false);
+    // setCreatedSortIsActive(false);
+    // setSortPacks("");
+    // dispatch(setPageAction({ pageNumber: 1 }));
   };
 
   const deletePackHandler = (id: string) => {
@@ -182,7 +209,7 @@ export default function BasicTable() {
   }, [
     debouncedPageNumber,
     rowsPerPage,
-    orderBy,
+    debouncedOrderBy,
     debouncedValueForSearch,
     debouncedValueForSliderMin,
     debouncedValueForSliderMax,
@@ -281,7 +308,8 @@ export default function BasicTable() {
           </div>
         </div>
         <div className={s.filterOffButton}>
-          <button onClick={removeAllFilters}>
+          {/*раскомментить обратно, когда напишу ф. removeAllFiltersHandler!*/}
+          <button onClick={removeAllFiltersHandler}>
             <FilterAltOffOutlinedIcon fontSize={"large"} color={"primary"} />
           </button>
         </div>

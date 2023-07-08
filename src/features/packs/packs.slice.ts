@@ -38,6 +38,14 @@ const slice = createSlice({
     minCardsCount: 0,
     page: 1,
     rowsPerPage: 5,
+    searchValue: "",
+    userIdForShowingMyPacks: "",
+    nameSortIsActive: false,
+    cardsCountSortIsActive: false,
+    lastUpdatedSortIsActive: false,
+    createdSortIsActive: false,
+    orderBy: "asc" as "asc" | "desc",
+    sortPacks: "",
   },
   reducers: {
     setPageAction(state, action: PayloadAction<{ pageNumber: number }>) {
@@ -45,6 +53,31 @@ const slice = createSlice({
     },
     setRowsPerPage(state, action: PayloadAction<{ rowsPerPage: number }>) {
       state.rowsPerPage = action.payload.rowsPerPage;
+    },
+    setSearchValue(state, action: PayloadAction<{ searchValue: string }>) {
+      state.searchValue = action.payload.searchValue;
+    },
+    setUserIdForShowingMyPacks(state, action: PayloadAction<{ userIdForShowingMyPacks: string }>) {
+      state.userIdForShowingMyPacks = action.payload.userIdForShowingMyPacks;
+    },
+    sortBy(state, action: PayloadAction<{ sortType: SortTypeType }>) {
+      state.nameSortIsActive = action.payload.sortType === "name";
+      state.cardsCountSortIsActive = action.payload.sortType === "cardsCount";
+      state.lastUpdatedSortIsActive = action.payload.sortType === "updated";
+      state.createdSortIsActive = action.payload.sortType === "created";
+      state.orderBy = state.orderBy === "asc" ? "desc" : "asc";
+      state.sortPacks = `${state.orderBy === "asc" ? "0" : "1"}${action.payload.sortType}`;
+      state.page = 1;
+    },
+    removeAllFilters(state, action: PayloadAction<void>) {
+      state.searchValue = "";
+      state.userIdForShowingMyPacks = "";
+      state.nameSortIsActive = false;
+      state.cardsCountSortIsActive = false;
+      state.lastUpdatedSortIsActive = false;
+      state.createdSortIsActive = false;
+      state.sortPacks = "";
+      state.page = 1;
     },
   },
   extraReducers: (builder) => {
@@ -62,4 +95,8 @@ const slice = createSlice({
 
 export const packsReducer = slice.reducer;
 export const packsThunks = { getPacks, createPack, deletePack };
-export const { setPageAction, setRowsPerPage } = slice.actions;
+export const { setPageAction, setRowsPerPage, setSearchValue, setUserIdForShowingMyPacks, sortBy, removeAllFilters } =
+  slice.actions;
+
+//types
+type SortTypeType = "name" | "cardsCount" | "updated" | "created";
