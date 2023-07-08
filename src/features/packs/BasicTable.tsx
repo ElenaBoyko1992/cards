@@ -196,23 +196,30 @@ export default function BasicTable() {
 
   useEffect(() => {
     dispatch(
-      packsThunks.getPacks({
-        pageCount: rowsPerPage,
-        page,
-        packName: searchValue,
-        user_id: userIdForShowingMyPacks,
-        min: valueForSlider[0],
-        max: valueForSlider[1],
-        sortPacks,
-      })
+      packsThunks.getPacks()
+      //старые параметры
+      // {
+      //   pageCount: rowsPerPage,
+      //   page,
+      //   packName: searchValue,
+      //   user_id: userIdForShowingMyPacks,
+      //   sortPacks,
+      //
+      //   //настроить в санке getPacks, когда перенесу логику слайдера в bll!
+      //   // min: valueForSlider[0],
+      //   // max: valueForSlider[1],
+      //
+      // }
     );
   }, [
     debouncedPageNumber,
     rowsPerPage,
     debouncedOrderBy,
     debouncedValueForSearch,
-    debouncedValueForSliderMin,
-    debouncedValueForSliderMax,
+
+    //раскомментить, когда правильно настрою слайдер!
+    // debouncedValueForSliderMin,
+    // debouncedValueForSliderMax,
     debouncedUserIdForShowingMyPacks,
   ]);
 
@@ -308,7 +315,6 @@ export default function BasicTable() {
           </div>
         </div>
         <div className={s.filterOffButton}>
-          {/*раскомментить обратно, когда напишу ф. removeAllFiltersHandler!*/}
           <button onClick={removeAllFiltersHandler}>
             <FilterAltOffOutlinedIcon fontSize={"large"} color={"primary"} />
           </button>
