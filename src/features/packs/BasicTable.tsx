@@ -76,7 +76,7 @@ export default function BasicTable() {
   // const [page, setPage] = useState(1);
   // const [searchValue, setSearchValue] = useState<string>("");
   // const [userIdForShowingMyPacks, setUserIdForShowingMyPacks] = useState("");
-  const [valueForSlider, setValueForSlider] = useState<any>([0, 0]);
+  const [valueForSlider, setValueForSlider] = useState<any>([minCardsCount, maxCardsCount]);
   // const [sortPacks, setSortPacks] = useState("");
 
   const debouncedValueForSearch = useDebounce<string>(searchValue, 500);
@@ -92,42 +92,18 @@ export default function BasicTable() {
 
   const sortByNameHandler = async () => {
     dispatch(sortBy({ sortType: "name" }));
-    // setCardsCountSortIsActive(false);
-    // setLastUpdatedSortIsActive(false);
-    // setCreatedSortIsActive(false);
-    // setNameSortIsActive(true);
-    // setOrderBy(orderBy === "asc" ? "desc" : "asc");
-    // setSortPacks(`${sortNumber}name`);
   };
 
   const sortByCardsCountHandler = async () => {
     dispatch(sortBy({ sortType: "cardsCount" }));
-    // setNameSortIsActive(false);
-    // setLastUpdatedSortIsActive(false);
-    // setCreatedSortIsActive(false);
-    // setCardsCountSortIsActive(true);
-    // setOrderBy(orderBy === "asc" ? "desc" : "asc");
-    // setSortPacks(`${sortNumber}cardsCount`);
   };
 
   const sortByLastUpdatedHandler = async () => {
     dispatch(sortBy({ sortType: "updated" }));
-    // setNameSortIsActive(false);
-    // setCardsCountSortIsActive(false);
-    // setCreatedSortIsActive(false);
-    // setLastUpdatedSortIsActive(true);
-    // setOrderBy(orderBy === "asc" ? "desc" : "asc");
-    // setSortPacks(`${sortNumber}updated`);
   };
 
   const sortByCreatedHandler = async () => {
     dispatch(sortBy({ sortType: "created" }));
-    // setNameSortIsActive(false);
-    // setCardsCountSortIsActive(false);
-    // setLastUpdatedSortIsActive(false);
-    // setCreatedSortIsActive(true);
-    // setOrderBy(orderBy === "asc" ? "desc" : "asc");
-    // setSortPacks(`${sortNumber}created`);
   };
 
   const handleChangeRowsPerPage = (event: SelectChangeEvent) => {
@@ -157,6 +133,7 @@ export default function BasicTable() {
     } else {
       setValueForSlider([valueForSlider[0], Math.max(newValue[1], valueForSlider[0] + minDistance)]);
     }
+    console.log(valueForSlider);
   };
 
   const handleInputSliderChangeMin = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -179,15 +156,6 @@ export default function BasicTable() {
     //    setValueForSlider([0, 0]); - доработать в action removeAllFiltersHandler, когда перенесу setValueForSlider в bll
 
     dispatch(removeAllFilters());
-
-    // dispatch(setSearchValue({ searchValue: "" }));
-    // dispatch(setUserIdForShowingMyPacks({ userIdForShowingMyPacks: "" }));
-    // setNameSortIsActive(false);
-    // setCardsCountSortIsActive(false);
-    // setLastUpdatedSortIsActive(false);
-    // setCreatedSortIsActive(false);
-    // setSortPacks("");
-    // dispatch(setPageAction({ pageNumber: 1 }));
   };
 
   const deletePackHandler = (id: string) => {
@@ -218,8 +186,8 @@ export default function BasicTable() {
     debouncedValueForSearch,
 
     //раскомментить, когда правильно настрою слайдер!
-    // debouncedValueForSliderMin,
-    // debouncedValueForSliderMax,
+    debouncedValueForSliderMin,
+    debouncedValueForSliderMax,
     debouncedUserIdForShowingMyPacks,
   ]);
 
