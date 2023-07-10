@@ -82,6 +82,7 @@ export default function BasicTable() {
   const debouncedValueForSearch = useDebounce<string>(searchValue, 500);
   const debouncedValueForSliderMin = useDebounce<number>(valueForSlider[0], 500);
   const debouncedValueForSliderMax = useDebounce<number>(valueForSlider[1], 500);
+  const debouncedValueForSlider = useDebounce<any>(valueForSlider, 500);
   const debouncedUserIdForShowingMyPacks = useDebounce<string>(userIdForShowingMyPacks, 500);
   const debouncedPageNumber = useDebounce<number>(page, 500);
   const debouncedOrderBy = useDebounce<string>(orderBy, 500);
@@ -186,11 +187,14 @@ export default function BasicTable() {
     debouncedValueForSearch,
 
     //раскомментить, когда правильно настрою слайдер!
-    debouncedValueForSliderMin,
-    debouncedValueForSliderMax,
+    // debouncedValueForSliderMin,
+    // debouncedValueForSliderMax,
+    valueForSlider,
     debouncedUserIdForShowingMyPacks,
   ]);
-
+  useEffect(() => {
+    setValueForSlider([minCardsCount, maxCardsCount]);
+  }, [minCardsCount, maxCardsCount]);
   return (
     <>
       <div className={s.tableFilters}>
