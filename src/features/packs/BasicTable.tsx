@@ -15,6 +15,7 @@ import {
   setRowsPerPage,
   setSearchValue,
   setUserIdForShowingMyPacks,
+  setValueForSlider,
   sortBy,
 } from "features/packs/packs.slice";
 import {
@@ -59,6 +60,7 @@ export default function BasicTable() {
   const cardsCountSortIsActive = useAppSelector((state) => state.packs.cardsCountSortIsActive);
   const lastUpdatedSortIsActive = useAppSelector((state) => state.packs.lastUpdatedSortIsActive);
   const createdSortIsActive = useAppSelector((state) => state.packs.createdSortIsActive);
+  const valueForSlider = useAppSelector((state) => state.packs.valueForSlider);
 
   const rows = packs.map((pack) => {
     return createData(pack.name, pack.cardsCount, pack.updated, pack.created, pack._id, pack.user_id);
@@ -76,16 +78,17 @@ export default function BasicTable() {
   // const [page, setPage] = useState(1);
   // const [searchValue, setSearchValue] = useState<string>("");
   // const [userIdForShowingMyPacks, setUserIdForShowingMyPacks] = useState("");
-  const [valueForSlider, setValueForSlider] = useState<any>([minCardsCount, maxCardsCount]);
+  // const [valueForSlider, setValueForSlider] = useState<any>([minCardsCount, maxCardsCount]);
   // const [sortPacks, setSortPacks] = useState("");
 
-  const debouncedValueForSearch = useDebounce<string>(searchValue, 500);
-  const debouncedValueForSliderMin = useDebounce<number>(valueForSlider[0], 500);
-  const debouncedValueForSliderMax = useDebounce<number>(valueForSlider[1], 500);
-  const debouncedValueForSlider = useDebounce<any>(valueForSlider, 500);
-  const debouncedUserIdForShowingMyPacks = useDebounce<string>(userIdForShowingMyPacks, 500);
-  const debouncedPageNumber = useDebounce<number>(page, 500);
-  const debouncedOrderBy = useDebounce<string>(orderBy, 500);
+  const debouncedValueForSearch = useDebounce<string>(searchValue, 1000);
+  const debouncedValueForSliderMin = useDebounce<number>(valueForSlider[0], 1000);
+  const debouncedValueForSliderMax = useDebounce<number>(valueForSlider[1], 1000);
+  const debouncedValueForSlider = useDebounce<Array<number>>(valueForSlider, 1000);
+  const debouncedUserIdForShowingMyPacks = useDebounce<string>(userIdForShowingMyPacks, 1000);
+  const debouncedPageNumber = useDebounce<number>(page, 1000);
+  const debouncedOrderBy = useDebounce<string>(orderBy, 1000);
+  const debouncedSortPacks = useDebounce<string>(sortPacks, 1000);
 
   const tablePaginationCount = useMemo(() => {
     return Math.ceil(cardPacksTotalCount / rowsPerPage);
@@ -121,7 +124,10 @@ export default function BasicTable() {
   };
 
   const showPacksCardsHandler = (event: React.MouseEvent<HTMLElement>, newAlignment: string) => {
+    dispatch(removeAllFilters());
     dispatch(setUserIdForShowingMyPacks({ userIdForShowingMyPacks: newAlignment }));
+
+    // dispatch(setValueForSlider({ value: [minCardsCount, maxCardsCount] }));
   };
 
   const minDistance = 1;
@@ -130,16 +136,23 @@ export default function BasicTable() {
       return;
     }
     if (activeThumb === 0) {
-      setValueForSlider([Math.min(newValue[0], valueForSlider[1] - minDistance), valueForSlider[1]]);
+      dispatch(
+        setValueForSlider({ value: [Math.min(newValue[0], valueForSlider[1] - minDistance), valueForSlider[1]] })
+      );
     } else {
-      setValueForSlider([valueForSlider[0], Math.max(newValue[1], valueForSlider[0] + minDistance)]);
+      dispatch(
+        setValueForSlider({ value: [valueForSlider[0], Math.max(newValue[1], valueForSlider[0] + minDistance)] })
+      );
     }
-    console.log(valueForSlider);
   };
 
   const handleInputSliderChangeMin = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (+event.target.value <= valueForSlider[1] - minDistance) {
-      setValueForSlider([Number(event.target.value), valueForSlider[1]]);
+      dispatch(
+        setValueForSlider({
+          value: [Number(event.target.value), valueForSlider[1]],
+        })
+      );
       dispatch(setPageAction({ pageNumber: 1 }));
     } else {
     }
@@ -147,7 +160,11 @@ export default function BasicTable() {
 
   const handleInputSliderChangeMax = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (+event.target.value >= valueForSlider[0] + minDistance) {
-      setValueForSlider([valueForSlider[0], Number(event.target.value)]);
+      dispatch(
+        setValueForSlider({
+          value: [valueForSlider[0], Number(event.target.value)],
+        })
+      );
       dispatch(setPageAction({ pageNumber: 1 }));
     }
   };
@@ -162,7 +179,9 @@ export default function BasicTable() {
   const deletePackHandler = (id: string) => {
     dispatch(packsThunks.deletePack({ id }));
   };
-
+  // useEffect(() => {
+  //   dispatch(setValueForSlider({ value: [minCardsCount, maxCardsCount] }));
+  // }, [minCardsCount, maxCardsCount]);
   useEffect(() => {
     dispatch(
       packsThunks.getPacks()
@@ -185,16 +204,13 @@ export default function BasicTable() {
     rowsPerPage,
     debouncedOrderBy,
     debouncedValueForSearch,
-
+    debouncedSortPacks,
     //раскомментить, когда правильно настрою слайдер!
-    // debouncedValueForSliderMin,
-    // debouncedValueForSliderMax,
-    valueForSlider,
+    debouncedValueForSliderMin,
+    debouncedValueForSliderMax,
     debouncedUserIdForShowingMyPacks,
   ]);
-  useEffect(() => {
-    setValueForSlider([minCardsCount, maxCardsCount]);
-  }, [minCardsCount, maxCardsCount]);
+
   return (
     <>
       <div className={s.tableFilters}>

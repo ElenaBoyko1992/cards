@@ -4,13 +4,16 @@ import { ArgCreatePackType, ArgGetPacksType, packsApi, PacksType, ReturnGetPacks
 
 const getPacks = createAppAsyncThunk<{ packs: ReturnGetPacksType }, void>("packs/getPacks", async (arg, thunkAPI) => {
   return thunkTryCatch(thunkAPI, async () => {
-    const { rowsPerPage, page, searchValue, userIdForShowingMyPacks, sortPacks } = thunkAPI.getState().packs;
+    const { rowsPerPage, page, searchValue, userIdForShowingMyPacks, sortPacks, valueForSlider } =
+      thunkAPI.getState().packs;
     const arg = {
       pageCount: rowsPerPage,
       page,
       packName: searchValue,
       user_id: userIdForShowingMyPacks,
       sortPacks,
+      min: valueForSlider[0],
+      max: valueForSlider[1],
     };
     const res = await packsApi.getPacks(arg);
     return { packs: res.data };
@@ -20,7 +23,6 @@ const getPacks = createAppAsyncThunk<{ packs: ReturnGetPacksType }, void>("packs
 const createPack = createAppAsyncThunk<void, ArgCreatePackType>("packs/createPack", async (arg, thunkAPI) => {
   return thunkTryCatch(thunkAPI, async () => {
     await packsApi.createPack(arg);
-    const rowsPerPage = thunkAPI.getState().packs.rowsPerPage;
     thunkAPI.dispatch(getPacks());
     return;
   });
@@ -29,17 +31,34 @@ const createPack = createAppAsyncThunk<void, ArgCreatePackType>("packs/createPac
 const deletePack = createAppAsyncThunk<void, { id: string }>("packs/deletePack", async (arg, thunkAPI) => {
   return thunkTryCatch(thunkAPI, async () => {
     await packsApi.deletePack(arg);
-    const rowsPerPage = thunkAPI.getState().packs.rowsPerPage;
     thunkAPI.dispatch(getPacks());
   });
 });
+
+// const showPacksCardsById = createAppAsyncThunk<any, { id: string }>(
+//   "packs/showPacksCardsById",
+//   async (arg, thunkAPI) => {
+//     const { minCardsCount, maxCardsCount } = thunkAPI.getState().packs;
+//     return thunkTryCatch(thunkAPI, async () => {
+//       await thunkAPI.dispatch(setUserIdForShowingMyPacks({ userIdForShowingMyPacks: arg.id }));
+//       const res = await thunkAPI.dispatch(getPacks());
+//       // @ts-ignore
+//       console.log(res.payload.packs);
+//
+//       thunkAPI.dispatch(
+//         // @ts-ignore
+//         setValueForSlider({ value: [res.payload.packs.minCardsCount, res.payload.packs.maxCardsCount] })
+//       );
+//     });
+//   }
+// );
 
 const slice = createSlice({
   name: "packs",
   initialState: {
     packsItems: [] as PacksType,
     cardPacksTotalCount: 0,
-    maxCardsCount: 0,
+    maxCardsCount: 78,
     minCardsCount: 0,
     page: 1,
     rowsPerPage: 5,
@@ -51,6 +70,7 @@ const slice = createSlice({
     createdSortIsActive: false,
     orderBy: "asc" as "asc" | "desc",
     sortPacks: "",
+    valueForSlider: [0, 0],
   },
   reducers: {
     setPageAction(state, action: PayloadAction<{ pageNumber: number }>) {
@@ -71,7 +91,7 @@ const slice = createSlice({
       state.lastUpdatedSortIsActive = action.payload.sortType === "updated";
       state.createdSortIsActive = action.payload.sortType === "created";
       state.orderBy = state.orderBy === "asc" ? "desc" : "asc";
-      state.sortPacks = `${state.orderBy === "asc" ? "0" : "1"}${action.payload.sortType}`;
+      state.sortPacks = `${state.orderBy === "asc" ? "1" : "0"}${action.payload.sortType}`;
       state.page = 1;
     },
     removeAllFilters(state, action: PayloadAction<void>) {
@@ -83,6 +103,10 @@ const slice = createSlice({
       state.createdSortIsActive = false;
       state.sortPacks = "";
       state.page = 1;
+      state.valueForSlider = [0, 0];
+    },
+    setValueForSlider(state, action: PayloadAction<{ value: Array<number> }>) {
+      state.valueForSlider = [action.payload.value[0], action.payload.value[1]];
     },
   },
   extraReducers: (builder) => {
@@ -100,8 +124,15 @@ const slice = createSlice({
 
 export const packsReducer = slice.reducer;
 export const packsThunks = { getPacks, createPack, deletePack };
-export const { setPageAction, setRowsPerPage, setSearchValue, setUserIdForShowingMyPacks, sortBy, removeAllFilters } =
-  slice.actions;
+export const {
+  setPageAction,
+  setRowsPerPage,
+  setSearchValue,
+  setUserIdForShowingMyPacks,
+  sortBy,
+  removeAllFilters,
+  setValueForSlider,
+} = slice.actions;
 
 //types
 type SortTypeType = "name" | "cardsCount" | "updated" | "created";
