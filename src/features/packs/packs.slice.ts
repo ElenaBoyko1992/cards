@@ -35,24 +35,6 @@ const deletePack = createAppAsyncThunk<void, { id: string }>("packs/deletePack",
   });
 });
 
-// const showPacksCardsById = createAppAsyncThunk<any, { id: string }>(
-//   "packs/showPacksCardsById",
-//   async (arg, thunkAPI) => {
-//     const { minCardsCount, maxCardsCount } = thunkAPI.getState().packs;
-//     return thunkTryCatch(thunkAPI, async () => {
-//       await thunkAPI.dispatch(setUserIdForShowingMyPacks({ userIdForShowingMyPacks: arg.id }));
-//       const res = await thunkAPI.dispatch(getPacks());
-//       // @ts-ignore
-//       console.log(res.payload.packs);
-//
-//       thunkAPI.dispatch(
-//         // @ts-ignore
-//         setValueForSlider({ value: [res.payload.packs.minCardsCount, res.payload.packs.maxCardsCount] })
-//       );
-//     });
-//   }
-// );
-
 const slice = createSlice({
   name: "packs",
   initialState: {
@@ -73,17 +55,19 @@ const slice = createSlice({
     valueForSlider: [0, 0],
   },
   reducers: {
-    setPageAction(state, action: PayloadAction<{ pageNumber: number }>) {
+    setPage(state, action: PayloadAction<{ pageNumber: number }>) {
       state.page = action.payload.pageNumber;
     },
     setRowsPerPage(state, action: PayloadAction<{ rowsPerPage: number }>) {
       state.rowsPerPage = action.payload.rowsPerPage;
+      state.page = 1;
     },
     setSearchValue(state, action: PayloadAction<{ searchValue: string }>) {
       state.searchValue = action.payload.searchValue;
     },
-    setUserIdForShowingMyPacks(state, action: PayloadAction<{ userIdForShowingMyPacks: string }>) {
+    showPacksCardsById(state, action: PayloadAction<{ userIdForShowingMyPacks: string }>) {
       state.userIdForShowingMyPacks = action.payload.userIdForShowingMyPacks;
+      state.valueForSlider = [0, 0];
     },
     sortBy(state, action: PayloadAction<{ sortType: SortTypeType }>) {
       state.nameSortIsActive = action.payload.sortType === "name";
@@ -107,6 +91,7 @@ const slice = createSlice({
     },
     setValueForSlider(state, action: PayloadAction<{ value: Array<number> }>) {
       state.valueForSlider = [action.payload.value[0], action.payload.value[1]];
+      state.page = 1;
     },
   },
   extraReducers: (builder) => {
@@ -125,10 +110,10 @@ const slice = createSlice({
 export const packsReducer = slice.reducer;
 export const packsThunks = { getPacks, createPack, deletePack };
 export const {
-  setPageAction,
+  setPage,
   setRowsPerPage,
   setSearchValue,
-  setUserIdForShowingMyPacks,
+  showPacksCardsById,
   sortBy,
   removeAllFilters,
   setValueForSlider,

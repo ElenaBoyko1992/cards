@@ -26,6 +26,18 @@ export const App = () => {
         }
       }
     };
+    /*    const fetchData = async () => {
+      if (!isLoggedIn) {
+        return navigate("/login");
+      } else {
+        const resultAction = await dispatch(authThunks.initializeApp());
+        if (authThunks.initializeApp.rejected.match(resultAction)) {
+          return navigate("/login");
+        } else {
+          return navigate("/packs");
+        }
+      }
+    };*/
     // call the function
     fetchData();
   }, []);

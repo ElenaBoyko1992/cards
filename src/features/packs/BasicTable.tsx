@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -11,10 +11,10 @@ import { useAppDispatch, useAppSelector } from "common/hooks";
 import {
   packsThunks,
   removeAllFilters,
-  setPageAction,
+  setPage,
   setRowsPerPage,
   setSearchValue,
-  setUserIdForShowingMyPacks,
+  showPacksCardsById,
   setValueForSlider,
   sortBy,
 } from "features/packs/packs.slice";
@@ -54,7 +54,6 @@ export default function BasicTable() {
   const rowsPerPage = useAppSelector((state) => state.packs.rowsPerPage);
   const searchValue = useAppSelector((state) => state.packs.searchValue);
   const userIdForShowingMyPacks = useAppSelector((state) => state.packs.userIdForShowingMyPacks);
-  const sortPacks = useAppSelector((state) => state.packs.sortPacks);
   const orderBy = useAppSelector((state) => state.packs.orderBy);
   const nameSortIsActive = useAppSelector((state) => state.packs.nameSortIsActive);
   const cardsCountSortIsActive = useAppSelector((state) => state.packs.cardsCountSortIsActive);
@@ -66,68 +65,50 @@ export default function BasicTable() {
     return createData(pack.name, pack.cardsCount, pack.updated, pack.created, pack._id, pack.user_id);
   });
 
-  // const [orderBy, setOrderBy] = useState<Order>("asc"); //1 - ask, 0 - desk
-  // const sortNumber = orderBy === "asc" ? "0" : "1";
-
-  // const [nameSortIsActive, setNameSortIsActive] = useState(false);
-  // const [cardsCountSortIsActive, setCardsCountSortIsActive] = useState(false);
-  // const [lastUpdatedSortIsActive, setLastUpdatedSortIsActive] = useState(false);
-  // const [createdSortIsActive, setCreatedSortIsActive] = useState(false);
-
-  // const [rowsPerPage, setRowsPerPage] = useState(5);
-  // const [page, setPage] = useState(1);
-  // const [searchValue, setSearchValue] = useState<string>("");
-  // const [userIdForShowingMyPacks, setUserIdForShowingMyPacks] = useState("");
-  // const [valueForSlider, setValueForSlider] = useState<any>([minCardsCount, maxCardsCount]);
-  // const [sortPacks, setSortPacks] = useState("");
-
-  const debouncedValueForSearch = useDebounce<string>(searchValue, 1000);
-  const debouncedValueForSliderMin = useDebounce<number>(valueForSlider[0], 1000);
-  const debouncedValueForSliderMax = useDebounce<number>(valueForSlider[1], 1000);
   const debouncedValueForSlider = useDebounce<Array<number>>(valueForSlider, 1000);
-  const debouncedUserIdForShowingMyPacks = useDebounce<string>(userIdForShowingMyPacks, 1000);
-  const debouncedPageNumber = useDebounce<number>(page, 1000);
-  const debouncedOrderBy = useDebounce<string>(orderBy, 1000);
-  const debouncedSortPacks = useDebounce<string>(sortPacks, 1000);
 
   const tablePaginationCount = useMemo(() => {
     return Math.ceil(cardPacksTotalCount / rowsPerPage);
   }, [cardPacksTotalCount, rowsPerPage]);
 
   const sortByNameHandler = async () => {
-    dispatch(sortBy({ sortType: "name" }));
+    await dispatch(sortBy({ sortType: "name" }));
+    dispatch(packsThunks.getPacks());
   };
 
   const sortByCardsCountHandler = async () => {
-    dispatch(sortBy({ sortType: "cardsCount" }));
+    await dispatch(sortBy({ sortType: "cardsCount" }));
+    dispatch(packsThunks.getPacks());
   };
 
   const sortByLastUpdatedHandler = async () => {
-    dispatch(sortBy({ sortType: "updated" }));
+    await dispatch(sortBy({ sortType: "updated" }));
+    dispatch(packsThunks.getPacks());
   };
 
   const sortByCreatedHandler = async () => {
-    dispatch(sortBy({ sortType: "created" }));
+    await dispatch(sortBy({ sortType: "created" }));
+    dispatch(packsThunks.getPacks());
   };
 
-  const handleChangeRowsPerPage = (event: SelectChangeEvent) => {
-    dispatch(setRowsPerPage({ rowsPerPage: parseInt(event.target.value, 10) as number }));
-    dispatch(setPageAction({ pageNumber: 1 }));
+  const handleChangeRowsPerPage = async (event: SelectChangeEvent) => {
+    await dispatch(setRowsPerPage({ rowsPerPage: parseInt(event.target.value, 10) as number }));
+    dispatch(packsThunks.getPacks());
   };
 
   const paginationChangedHandler = async (event: React.ChangeEvent<unknown>, page: number) => {
-    dispatch(setPageAction({ pageNumber: page }));
+    await dispatch(setPage({ pageNumber: page }));
+    dispatch(packsThunks.getPacks());
   };
 
-  const searchHandler = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    dispatch(setSearchValue({ searchValue: event.target.value }));
+  const searchHandler = async (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    await dispatch(setSearchValue({ searchValue: event.target.value }));
+    dispatch(packsThunks.getPacks());
   };
 
-  const showPacksCardsHandler = (event: React.MouseEvent<HTMLElement>, newAlignment: string) => {
-    dispatch(removeAllFilters());
-    dispatch(setUserIdForShowingMyPacks({ userIdForShowingMyPacks: newAlignment }));
-
-    // dispatch(setValueForSlider({ value: [minCardsCount, maxCardsCount] }));
+  const showPacksCardsHandler = async (event: React.MouseEvent<HTMLElement>, newAlignment: string) => {
+    await dispatch(showPacksCardsById({ userIdForShowingMyPacks: newAlignment }));
+    dispatch(packsThunks.getPacks());
   };
 
   const minDistance = 1;
@@ -153,8 +134,6 @@ export default function BasicTable() {
           value: [Number(event.target.value), valueForSlider[1]],
         })
       );
-      dispatch(setPageAction({ pageNumber: 1 }));
-    } else {
     }
   };
 
@@ -165,51 +144,21 @@ export default function BasicTable() {
           value: [valueForSlider[0], Number(event.target.value)],
         })
       );
-      dispatch(setPageAction({ pageNumber: 1 }));
     }
   };
 
-  // временно закомментирована, потом вернуть!
-  const removeAllFiltersHandler = () => {
-    //    setValueForSlider([0, 0]); - доработать в action removeAllFiltersHandler, когда перенесу setValueForSlider в bll
-
-    dispatch(removeAllFilters());
+  const removeAllFiltersHandler = async () => {
+    await dispatch(removeAllFilters());
+    dispatch(packsThunks.getPacks());
   };
 
   const deletePackHandler = (id: string) => {
     dispatch(packsThunks.deletePack({ id }));
   };
-  // useEffect(() => {
-  //   dispatch(setValueForSlider({ value: [minCardsCount, maxCardsCount] }));
-  // }, [minCardsCount, maxCardsCount]);
+
   useEffect(() => {
-    dispatch(
-      packsThunks.getPacks()
-      //старые параметры
-      // {
-      //   pageCount: rowsPerPage,
-      //   page,
-      //   packName: searchValue,
-      //   user_id: userIdForShowingMyPacks,
-      //   sortPacks,
-      //
-      //   //настроить в санке getPacks, когда перенесу логику слайдера в bll!
-      //   // min: valueForSlider[0],
-      //   // max: valueForSlider[1],
-      //
-      // }
-    );
-  }, [
-    debouncedPageNumber,
-    rowsPerPage,
-    debouncedOrderBy,
-    debouncedValueForSearch,
-    debouncedSortPacks,
-    //раскомментить, когда правильно настрою слайдер!
-    debouncedValueForSliderMin,
-    debouncedValueForSliderMax,
-    debouncedUserIdForShowingMyPacks,
-  ]);
+    dispatch(packsThunks.getPacks());
+  }, [debouncedValueForSlider]);
 
   return (
     <>
@@ -279,11 +228,7 @@ export default function BasicTable() {
                 min={minCardsCount}
                 max={maxCardsCount}
                 step={1}
-                // getAriaValueText={(value: number) => {
-                //   return `${value}°C`;
-                // }}
                 disableSwap
-                // onChangeCommitted={onSliderChangeHandler}
               />
             </Box>
             <TextField
