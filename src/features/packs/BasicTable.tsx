@@ -14,46 +14,31 @@ import {
   setPage,
   setRowsPerPage,
   setSearchValue,
-  showPacksCardsById,
   setValueForSlider,
+  showPacksCardsById,
   sortBy,
 } from "features/packs/packs.slice";
-import {
-  Box,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
-  OutlinedInput,
-  Pagination,
-  Select,
-  SelectChangeEvent,
-  Slider,
-  TableSortLabel,
-  TextField,
-  ToggleButton,
-  ToggleButtonGroup,
-} from "@mui/material";
+import { MenuItem, Pagination, Select, SelectChangeEvent, TableSortLabel } from "@mui/material";
 import s from "./Packs.module.css";
-import SearchIcon from "@mui/icons-material/Search";
+
 import { useDebounce } from "common/hooks/useDebounce";
-import FilterAltOffOutlinedIcon from "@mui/icons-material/FilterAltOffOutlined";
+
 import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { createData } from "common/utils/createData";
+import { TableFilters } from "features/packs/TableFilters";
 
 export default function BasicTable() {
-  console.log("перерисовка");
+  console.log("перерисовка BasicTable");
   const dispatch = useAppDispatch();
   const packs = useAppSelector((state) => state.packs.packsItems);
   const cardPacksTotalCount = useAppSelector((state) => state.packs.cardPacksTotalCount);
   const userId = useAppSelector((state) => (state.auth.profile ? state.auth.profile._id : ""));
-  const maxCardsCount = useAppSelector((state) => state.packs.maxCardsCount);
-  const minCardsCount = useAppSelector((state) => state.packs.minCardsCount);
+
   const page = useAppSelector((state) => state.packs.page);
   const rowsPerPage = useAppSelector((state) => state.packs.rowsPerPage);
-  const searchValue = useAppSelector((state) => state.packs.searchValue);
-  const userIdForShowingMyPacks = useAppSelector((state) => state.packs.userIdForShowingMyPacks);
+
   const orderBy = useAppSelector((state) => state.packs.orderBy);
   const nameSortIsActive = useAppSelector((state) => state.packs.nameSortIsActive);
   const cardsCountSortIsActive = useAppSelector((state) => state.packs.cardsCountSortIsActive);
@@ -62,7 +47,7 @@ export default function BasicTable() {
   const valueForSlider = useAppSelector((state) => state.packs.valueForSlider);
 
   const rows = packs.map((pack) => {
-    return createData(pack.name, pack.cardsCount, pack.updated, pack.created, pack._id, pack.user_id);
+    return createData(pack.name, pack.cardsCount, pack.updated, pack.user_name, pack._id, pack.user_id);
   });
 
   const debouncedValueForSlider = useDebounce<Array<number>>(valueForSlider, 1000);
@@ -101,59 +86,9 @@ export default function BasicTable() {
     dispatch(packsThunks.getPacks());
   };
 
-  const searchHandler = async (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    await dispatch(setSearchValue({ searchValue: event.target.value }));
+  const deletePackHandler = async (id: string) => {
+    await dispatch(packsThunks.deletePack({ id }));
     dispatch(packsThunks.getPacks());
-  };
-
-  const showPacksCardsHandler = async (event: React.MouseEvent<HTMLElement>, newAlignment: string) => {
-    await dispatch(showPacksCardsById({ userIdForShowingMyPacks: newAlignment }));
-    dispatch(packsThunks.getPacks());
-  };
-
-  const minDistance = 1;
-  const sliderHandleChange1 = (event: Event, newValue: number | number[], activeThumb: number) => {
-    if (!Array.isArray(newValue)) {
-      return;
-    }
-    if (activeThumb === 0) {
-      dispatch(
-        setValueForSlider({ value: [Math.min(newValue[0], valueForSlider[1] - minDistance), valueForSlider[1]] })
-      );
-    } else {
-      dispatch(
-        setValueForSlider({ value: [valueForSlider[0], Math.max(newValue[1], valueForSlider[0] + minDistance)] })
-      );
-    }
-  };
-
-  const handleInputSliderChangeMin = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (+event.target.value <= valueForSlider[1] - minDistance) {
-      dispatch(
-        setValueForSlider({
-          value: [Number(event.target.value), valueForSlider[1]],
-        })
-      );
-    }
-  };
-
-  const handleInputSliderChangeMax = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (+event.target.value >= valueForSlider[0] + minDistance) {
-      dispatch(
-        setValueForSlider({
-          value: [valueForSlider[0], Number(event.target.value)],
-        })
-      );
-    }
-  };
-
-  const removeAllFiltersHandler = async () => {
-    await dispatch(removeAllFilters());
-    dispatch(packsThunks.getPacks());
-  };
-
-  const deletePackHandler = (id: string) => {
-    dispatch(packsThunks.deletePack({ id }));
   };
 
   useEffect(() => {
@@ -162,97 +97,7 @@ export default function BasicTable() {
 
   return (
     <>
-      <div className={s.tableFilters}>
-        <div className={s.filterSearch}>
-          <InputLabel shrink htmlFor="search-input" className={s.inputLabelText}>
-            Search
-          </InputLabel>
-          <OutlinedInput
-            id="search-input"
-            onChange={searchHandler}
-            startAdornment={
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            }
-            placeholder="Provide your text"
-            size="small"
-            value={searchValue}
-          />
-        </div>
-        <div className={s.filterShowPacks}>
-          <InputLabel shrink htmlFor="show-packs" className={s.inputLabelText}>
-            Show packs cards
-          </InputLabel>
-          <ToggleButtonGroup
-            id="show-packs"
-            value={userIdForShowingMyPacks}
-            exclusive
-            onChange={showPacksCardsHandler}
-            size={"small"}
-            color={"primary"}
-          >
-            <ToggleButton value={userId} style={{ width: "100px" }}>
-              My
-            </ToggleButton>
-            <ToggleButton value="" aria-label="left aligned" style={{ width: "100px" }}>
-              All
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </div>
-        <div className={s.filterSlider}>
-          <InputLabel shrink htmlFor="slider" className={s.inputLabelText}>
-            Number of cards
-          </InputLabel>
-          <div className={s.sliderBlock} id={"slider"}>
-            <TextField
-              id="slider"
-              style={{ width: "75px", marginRight: "20px" }}
-              variant="outlined"
-              value={valueForSlider[0]}
-              size="small"
-              onChange={handleInputSliderChangeMin}
-              // onBlur={handleBlur}
-              inputProps={{
-                step: 1,
-                min: minCardsCount,
-                max: maxCardsCount,
-                type: "number",
-              }}
-            />
-            <Box sx={{ width: 200 }}>
-              <Slider
-                value={valueForSlider}
-                onChange={sliderHandleChange1}
-                valueLabelDisplay="auto"
-                min={minCardsCount}
-                max={maxCardsCount}
-                step={1}
-                disableSwap
-              />
-            </Box>
-            <TextField
-              style={{ width: "75px", marginLeft: "20px" }}
-              variant="outlined"
-              value={valueForSlider[1]}
-              size="small"
-              onChange={handleInputSliderChangeMax}
-              // onBlur={handleBlur}
-              inputProps={{
-                step: 1,
-                min: minCardsCount,
-                max: maxCardsCount,
-                type: "number",
-              }}
-            />
-          </div>
-        </div>
-        <div className={s.filterOffButton}>
-          <button onClick={removeAllFiltersHandler}>
-            <FilterAltOffOutlinedIcon fontSize={"large"} color={"primary"} />
-          </button>
-        </div>
-      </div>
+      <TableFilters />
 
       {rows.length ? (
         <div>
@@ -360,6 +205,3 @@ export default function BasicTable() {
     </>
   );
 }
-
-//types
-type Order = "asc" | "desc";

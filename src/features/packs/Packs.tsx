@@ -1,21 +1,16 @@
 import React from "react";
 import { Button } from "@mui/material";
 import s from "./Packs.module.css";
-import EnhancedTable from "features/packs/EnhancedTable";
-import DataGridTable from "features/packs/DataGridTable";
 import BasicTable from "features/packs/BasicTable";
 import { useAppDispatch } from "common/hooks";
 import { packsThunks } from "features/packs/packs.slice";
 
 export const Packs = () => {
   const dispatch = useAppDispatch();
-  //
-  // useEffect(() => {
-  //   dispatch(packsThunks.getPacks());
-  // }, []);
 
-  const addNewPackPressHandler = () => {
-    dispatch(packsThunks.createPack({}));
+  const addNewPackPressHandler = async () => {
+    await dispatch(packsThunks.createPack({}));
+    dispatch(packsThunks.getPacks());
   };
 
   return (
