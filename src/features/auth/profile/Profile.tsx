@@ -6,7 +6,7 @@ import { Button, Grid, Paper } from "@mui/material";
 import defaultAvatar from "assets/images/defaultAvatar.png";
 import photoIcon from "assets/images/photo-camera-photocamera-svgrepo-com.svg";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import { EditableSpan } from "components/EditableSpan";
+import { EditableSpan } from "components/EditableSpan/EditableSpan";
 import { authThunks } from "features/auth/auth.slice";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "common/hooks";

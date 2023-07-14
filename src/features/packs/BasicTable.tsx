@@ -28,17 +28,13 @@ import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { createData } from "common/utils/createData";
 import { TableFilters } from "features/packs/TableFilters";
+import { TablePagination } from "components/TablePagination/TablePagination";
 
 export default function BasicTable() {
   console.log("перерисовка BasicTable");
   const dispatch = useAppDispatch();
   const packs = useAppSelector((state) => state.packs.packsItems);
-  const cardPacksTotalCount = useAppSelector((state) => state.packs.cardPacksTotalCount);
   const userId = useAppSelector((state) => (state.auth.profile ? state.auth.profile._id : ""));
-
-  const page = useAppSelector((state) => state.packs.page);
-  const rowsPerPage = useAppSelector((state) => state.packs.rowsPerPage);
-
   const orderBy = useAppSelector((state) => state.packs.orderBy);
   const nameSortIsActive = useAppSelector((state) => state.packs.nameSortIsActive);
   const cardsCountSortIsActive = useAppSelector((state) => state.packs.cardsCountSortIsActive);
@@ -51,10 +47,6 @@ export default function BasicTable() {
   });
 
   const debouncedValueForSlider = useDebounce<Array<number>>(valueForSlider, 1000);
-
-  const tablePaginationCount = useMemo(() => {
-    return Math.ceil(cardPacksTotalCount / rowsPerPage);
-  }, [cardPacksTotalCount, rowsPerPage]);
 
   const sortByNameHandler = async () => {
     await dispatch(sortBy({ sortType: "name" }));
@@ -76,6 +68,20 @@ export default function BasicTable() {
     dispatch(packsThunks.getPacks());
   };
 
+  const deletePackHandler = async (id: string) => {
+    await dispatch(packsThunks.deletePack({ id }));
+    dispatch(packsThunks.getPacks());
+  };
+
+  //for pagination
+  const page = useAppSelector((state) => state.packs.page);
+  const rowsPerPage = useAppSelector((state) => state.packs.rowsPerPage);
+  const cardPacksTotalCount = useAppSelector((state) => state.packs.cardPacksTotalCount);
+
+  const tablePaginationCount = useMemo(() => {
+    return Math.ceil(cardPacksTotalCount / rowsPerPage);
+  }, [cardPacksTotalCount, rowsPerPage]);
+
   const handleChangeRowsPerPage = async (event: SelectChangeEvent) => {
     await dispatch(setRowsPerPage({ rowsPerPage: parseInt(event.target.value, 10) as number }));
     dispatch(packsThunks.getPacks());
@@ -83,11 +89,6 @@ export default function BasicTable() {
 
   const paginationChangedHandler = async (event: React.ChangeEvent<unknown>, page: number) => {
     await dispatch(setPage({ pageNumber: page }));
-    dispatch(packsThunks.getPacks());
-  };
-
-  const deletePackHandler = async (id: string) => {
-    await dispatch(packsThunks.deletePack({ id }));
     dispatch(packsThunks.getPacks());
   };
 
@@ -100,105 +101,113 @@ export default function BasicTable() {
       <TableFilters />
 
       {rows.length ? (
-        <div>
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    Name
-                    <TableSortLabel
-                      active={nameSortIsActive}
-                      direction={orderBy}
-                      onClick={sortByNameHandler}
-                    ></TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    Cards
-                    <TableSortLabel
-                      active={cardsCountSortIsActive}
-                      direction={orderBy}
-                      onClick={sortByCardsCountHandler}
-                    ></TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    Last Updated
-                    <TableSortLabel
-                      active={lastUpdatedSortIsActive}
-                      direction={orderBy}
-                      onClick={sortByLastUpdatedHandler}
-                    ></TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    Created by
-                    <TableSortLabel
-                      active={createdSortIsActive}
-                      direction={orderBy}
-                      onClick={sortByCreatedHandler}
-                    ></TableSortLabel>
-                  </TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row) => (
-                  <TableRow key={row.packId}>
-                    <TableCell>{row.name}</TableCell>
-                    <TableCell>{row.cardsCount}</TableCell>
-                    <TableCell>{row.updated}</TableCell>
-                    <TableCell>{row.created}</TableCell>
-                    <TableCell>
-                      <div className={s.tableSellActions}>
-                        {row.userId === userId ? (
-                          <div className={s.tableSellIcons}>
-                            <button disabled={!row.cardsCount}>
-                              <SchoolOutlinedIcon />
-                            </button>
-                            <button>
-                              <BorderColorOutlinedIcon />
-                            </button>
-                            <button onClick={() => deletePackHandler(row.packId)}>
-                              <DeleteOutlineOutlinedIcon />
-                            </button>
-                          </div>
-                        ) : (
-                          <div className={s.tableSellIcons}>
-                            <button disabled={!row.cardsCount}>
-                              <SchoolOutlinedIcon />
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <div className={s.paginationBlock}>
-            <Pagination
-              count={tablePaginationCount}
-              color="primary"
-              shape="rounded"
-              size="small"
-              onChange={paginationChangedHandler}
-              className={s.tablePagination}
-              page={page}
-            />
-            <span>Show</span>
-            <Select
-              value={rowsPerPage.toString()}
-              onChange={handleChangeRowsPerPage}
-              className={s.tableSelectRowPerPage}
-              size="small"
-            >
-              <MenuItem value={5}>5</MenuItem>
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={25}>25</MenuItem>
-            </Select>
-            <span>Cards per page</span>
-          </div>
-        </div>
+        // <div>
+        //   <TableContainer component={Paper}>
+        //     <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        //       <TableHead>
+        //         <TableRow>
+        //           <TableCell>
+        //             Name
+        //             <TableSortLabel
+        //               active={nameSortIsActive}
+        //               direction={orderBy}
+        //               onClick={sortByNameHandler}
+        //             ></TableSortLabel>
+        //           </TableCell>
+        //           <TableCell>
+        //             Cards
+        //             <TableSortLabel
+        //               active={cardsCountSortIsActive}
+        //               direction={orderBy}
+        //               onClick={sortByCardsCountHandler}
+        //             ></TableSortLabel>
+        //           </TableCell>
+        //           <TableCell>
+        //             Last Updated
+        //             <TableSortLabel
+        //               active={lastUpdatedSortIsActive}
+        //               direction={orderBy}
+        //               onClick={sortByLastUpdatedHandler}
+        //             ></TableSortLabel>
+        //           </TableCell>
+        //           <TableCell>
+        //             Created by
+        //             <TableSortLabel
+        //               active={createdSortIsActive}
+        //               direction={orderBy}
+        //               onClick={sortByCreatedHandler}
+        //             ></TableSortLabel>
+        //           </TableCell>
+        //           <TableCell>Actions</TableCell>
+        //         </TableRow>
+        //       </TableHead>
+        //       <TableBody>
+        //         {rows.map((row) => (
+        //           <TableRow key={row.packId}>
+        //             <TableCell>{row.name}</TableCell>
+        //             <TableCell>{row.cardsCount}</TableCell>
+        //             <TableCell>{row.updated}</TableCell>
+        //             <TableCell>{row.created}</TableCell>
+        //             <TableCell>
+        //               <div className={s.tableSellActions}>
+        //                 {row.userId === userId ? (
+        //                   <div className={s.tableSellIcons}>
+        //                     <button disabled={!row.cardsCount}>
+        //                       <SchoolOutlinedIcon />
+        //                     </button>
+        //                     <button>
+        //                       <BorderColorOutlinedIcon />
+        //                     </button>
+        //                     <button onClick={() => deletePackHandler(row.packId)}>
+        //                       <DeleteOutlineOutlinedIcon />
+        //                     </button>
+        //                   </div>
+        //                 ) : (
+        //                   <div className={s.tableSellIcons}>
+        //                     <button disabled={!row.cardsCount}>
+        //                       <SchoolOutlinedIcon />
+        //                     </button>
+        //                   </div>
+        //                 )}
+        //               </div>
+        //             </TableCell>
+        //           </TableRow>
+        //         ))}
+        //       </TableBody>
+        //     </Table>
+        //   </TableContainer>
+        //   <TablePagination
+        //     cardTotalCount={cardPacksTotalCount}
+        //     paginationChangedHandler={paginationChangedHandler}
+        //     handleChangeRowsPerPage={handleChangeRowsPerPage}
+        //     page={page}
+        //     rowsPerPage={rowsPerPage}
+        //   />
+        //   {/*<div className={s.paginationBlock}>*/}
+        //   {/*  <TablePagination*/}
+        //   {/*    count={tablePaginationCount}*/}
+        //   {/*    color="primary"*/}
+        //   {/*    shape="rounded"*/}
+        //   {/*    size="small"*/}
+        //   {/*    onChange={paginationChangedHandler}*/}
+        //   {/*    className={s.tablePagination}*/}
+        //   {/*    page={page}*/}
+        //   {/*  />*/}
+        //   {/*  <span>Show</span>*/}
+        //   {/*  <Select*/}
+        //   {/*    value={rowsPerPage.toString()}*/}
+        //   {/*    onChange={handleChangeRowsPerPage}*/}
+        //   {/*    className={s.tableSelectRowPerPage}*/}
+        //   {/*    size="small"*/}
+        //   {/*  >*/}
+        //   {/*    <MenuItem value={5}>5</MenuItem>*/}
+        //   {/*    <MenuItem value={10}>10</MenuItem>*/}
+        //   {/*    <MenuItem value={25}>25</MenuItem>*/}
+        //   {/*  </Select>*/}
+        //   {/*  <span>Cards per page</span>*/}
+        //   {/*</div>*/}
+        // </div>
+        <></> //временная заглушка, потом убрать
       ) : (
         <div className={s.packsNotFound}>Колоды не найдены. Измените параметры запроса.</div>
       )}

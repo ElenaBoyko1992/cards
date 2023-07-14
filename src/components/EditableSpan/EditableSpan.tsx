@@ -1,7 +1,7 @@
 import React, { ChangeEvent, KeyboardEvent, useState } from "react";
 import { Button, TextField } from "@mui/material";
 import pencilIcon from "assets/images/pencil-line-svgrepo-com.svg";
-import s from "./EditableSpan.module.css";
+import s from "components/EditableSpan/EditableSpan.module.css";
 
 type EditableSpanPropsType = {
   value: string;
