@@ -4,7 +4,7 @@ import Table from "@mui/material/Table";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
-import { TableSortLabel } from "@mui/material";
+import { SelectChangeEvent, TableSortLabel } from "@mui/material";
 import TableBody from "@mui/material/TableBody";
 import s from "features/packs/Packs.module.css";
 import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
@@ -12,8 +12,58 @@ import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { TablePagination } from "components/TablePagination/TablePagination";
 import * as React from "react";
+import { useAppDispatch, useAppSelector } from "common/hooks";
+import { packsThunks, setPage, setRowsPerPage, sortBy } from "features/packs/packs.slice";
 
-export const PacksTable = () => {
+export const PacksTable = (props: PacksTablePropsType) => {
+  const dispatch = useAppDispatch();
+  const userId = useAppSelector((state) => (state.auth.profile ? state.auth.profile._id : ""));
+  const orderBy = useAppSelector((state) => state.packs.orderBy);
+  const nameSortIsActive = useAppSelector((state) => state.packs.nameSortIsActive);
+  const cardsCountSortIsActive = useAppSelector((state) => state.packs.cardsCountSortIsActive);
+  const lastUpdatedSortIsActive = useAppSelector((state) => state.packs.lastUpdatedSortIsActive);
+  const createdSortIsActive = useAppSelector((state) => state.packs.createdSortIsActive);
+
+  const sortByNameHandler = async () => {
+    await dispatch(sortBy({ sortType: "name" }));
+    dispatch(packsThunks.getPacks());
+  };
+
+  const sortByCardsCountHandler = async () => {
+    await dispatch(sortBy({ sortType: "cardsCount" }));
+    dispatch(packsThunks.getPacks());
+  };
+
+  const sortByLastUpdatedHandler = async () => {
+    await dispatch(sortBy({ sortType: "updated" }));
+    dispatch(packsThunks.getPacks());
+  };
+
+  const sortByCreatedHandler = async () => {
+    await dispatch(sortBy({ sortType: "created" }));
+    dispatch(packsThunks.getPacks());
+  };
+
+  const deletePackHandler = async (id: string) => {
+    await dispatch(packsThunks.deletePack({ id }));
+    dispatch(packsThunks.getPacks());
+  };
+
+  //for pagination
+  const page = useAppSelector((state) => state.packs.page);
+  const rowsPerPage = useAppSelector((state) => state.packs.rowsPerPage);
+  const cardPacksTotalCount = useAppSelector((state) => state.packs.cardPacksTotalCount);
+
+  const handleChangeRowsPerPage = async (event: SelectChangeEvent) => {
+    await dispatch(setRowsPerPage({ rowsPerPage: parseInt(event.target.value, 10) as number }));
+    dispatch(packsThunks.getPacks());
+  };
+
+  const paginationChangedHandler = async (event: React.ChangeEvent<unknown>, page: number) => {
+    await dispatch(setPage({ pageNumber: page }));
+    dispatch(packsThunks.getPacks());
+  };
+
   return (
     <div>
       <TableContainer component={Paper}>
@@ -56,7 +106,7 @@ export const PacksTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
+            {props.rows.map((row) => (
               <TableRow key={row.packId}>
                 <TableCell>{row.name}</TableCell>
                 <TableCell>{row.cardsCount}</TableCell>
@@ -97,29 +147,20 @@ export const PacksTable = () => {
         page={page}
         rowsPerPage={rowsPerPage}
       />
-      {/*<div className={s.paginationBlock}>*/}
-      {/*  <TablePagination*/}
-      {/*    count={tablePaginationCount}*/}
-      {/*    color="primary"*/}
-      {/*    shape="rounded"*/}
-      {/*    size="small"*/}
-      {/*    onChange={paginationChangedHandler}*/}
-      {/*    className={s.tablePagination}*/}
-      {/*    page={page}*/}
-      {/*  />*/}
-      {/*  <span>Show</span>*/}
-      {/*  <Select*/}
-      {/*    value={rowsPerPage.toString()}*/}
-      {/*    onChange={handleChangeRowsPerPage}*/}
-      {/*    className={s.tableSelectRowPerPage}*/}
-      {/*    size="small"*/}
-      {/*  >*/}
-      {/*    <MenuItem value={5}>5</MenuItem>*/}
-      {/*    <MenuItem value={10}>10</MenuItem>*/}
-      {/*    <MenuItem value={25}>25</MenuItem>*/}
-      {/*  </Select>*/}
-      {/*  <span>Cards per page</span>*/}
-      {/*</div>*/}
     </div>
   );
+};
+
+//types
+type PacksTablePropsType = {
+  rows: Array<RowType>;
+};
+
+type RowType = {
+  cardsCount: number;
+  created: string;
+  name: string;
+  packId: string;
+  updated: string;
+  userId: string;
 };

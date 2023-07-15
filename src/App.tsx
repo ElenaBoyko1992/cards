@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "common/hooks";
 import { Header } from "features/header/Header";
 import { Outlet, useNavigate } from "react-router-dom";
 import { authThunks } from "features/auth/auth.slice";
+import { packsThunks } from "features/packs/packs.slice";
 
 export const App = () => {
   const isLoading = useAppSelector((state) => state.app.isLoading);
@@ -22,6 +23,7 @@ export const App = () => {
         if (authThunks.initializeApp.rejected.match(resultAction)) {
           return navigate("/login");
         } else {
+          // await dispatch(packsThunks.initialGetPacksForSlider());
           return navigate("/packs");
         }
       }

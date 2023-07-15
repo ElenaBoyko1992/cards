@@ -21,6 +21,16 @@ const getPacks = createAppAsyncThunk<{ packs: ReturnGetPacksType }, void>("packs
   });
 });
 
+// const initialGetPacksForSlider = createAppAsyncThunk<any, void>(
+//   "packs/initialGetPacksForSlider",
+//   async (arg, thunkAPI) => {
+//     return thunkTryCatch(thunkAPI, async () => {
+//       const res = await thunkAPI.dispatch(getPacks());
+//       return;
+//     });
+//   }
+// );
+
 const createPack = createAppAsyncThunk<void, ArgCreatePackType>("packs/createPack", async (arg, thunkAPI) => {
   return thunkTryCatch(thunkAPI, async () => {
     await packsApi.createPack(arg);
@@ -108,6 +118,9 @@ const slice = createSlice({
     builder.addCase(createPack.fulfilled, (state, action) => {
       state.page = 1;
     });
+    // builder.addCase(initialGetPacksForSlider.fulfilled, (state, action) => {
+    //   state.valueForSlider = [state.minCardsCount, state.maxCardsCount];
+    // });
   },
 });
 
