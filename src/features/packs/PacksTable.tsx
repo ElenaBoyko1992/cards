@@ -14,6 +14,7 @@ import { TablePagination } from "components/TablePagination/TablePagination";
 import * as React from "react";
 import { useAppDispatch, useAppSelector } from "common/hooks";
 import { packsThunks, setPage, setRowsPerPage, sortBy } from "features/packs/packs.slice";
+import { NavLink } from "react-router-dom";
 
 export const PacksTable = (props: PacksTablePropsType) => {
   const dispatch = useAppDispatch();
@@ -108,7 +109,9 @@ export const PacksTable = (props: PacksTablePropsType) => {
           <TableBody>
             {props.rows.map((row) => (
               <TableRow key={row.packId}>
-                <TableCell>{row.name}</TableCell>
+                <TableCell>
+                  <NavLink to={`/cards/${row.packId}`}>{row.name}</NavLink>
+                </TableCell>
                 <TableCell>{row.cardsCount}</TableCell>
                 <TableCell>{row.updated}</TableCell>
                 <TableCell>{row.created}</TableCell>

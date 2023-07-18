@@ -13,15 +13,18 @@ export default function BasicTable() {
   const dispatch = useAppDispatch();
   const packs = useAppSelector((state) => state.packs.packsItems);
   const valueForSlider = useAppSelector((state) => state.packs.valueForSlider);
+  const searchValue = useAppSelector((state) => state.packs.searchValue);
 
   const rows = packs.map((pack) => {
     return createData(pack.name, pack.cardsCount, pack.updated, pack.user_name, pack._id, pack.user_id);
   });
 
   const debouncedValueForSlider = useDebounce<Array<number>>(valueForSlider, 1000);
+  const debouncedSearchValue = useDebounce<string>(searchValue, 1000);
+
   useEffect(() => {
     dispatch(packsThunks.getPacks());
-  }, [debouncedValueForSlider]);
+  }, [debouncedValueForSlider, debouncedSearchValue]);
 
   return (
     <>

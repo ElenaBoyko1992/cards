@@ -31,9 +31,8 @@ export const TableFilters = () => {
   const valueForSlider = useAppSelector((state) => state.packs.valueForSlider);
   const userId = useAppSelector((state) => (state.auth.profile ? state.auth.profile._id : ""));
 
-  const searchHandler = async (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    await dispatch(setSearchValue({ searchValue: event.target.value }));
-    dispatch(packsThunks.getPacks());
+  const searchHandler = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    dispatch(setSearchValue({ searchValue: event.target.value }));
   };
 
   const showPacksCardsHandler = async (event: React.MouseEvent<HTMLElement>, newAlignment: string) => {

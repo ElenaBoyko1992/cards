@@ -15,6 +15,7 @@ import { GlobalError } from "components/GlobalError/GlobalError";
 import App from "App";
 import { CheckEmail } from "features/auth/forgotPassword/CheckEmail";
 import { Packs } from "features/packs/Packs";
+import { Cards } from "features/cards/Cards";
 
 const router = createHashRouter([
   {
@@ -46,8 +47,8 @@ const router = createHashRouter([
         element: <Packs />,
       },
       {
-        path: "/cards",
-        element: <h1>cards</h1>,
+        path: "/cards/:packId",
+        element: <Cards />,
       },
     ],
   },
