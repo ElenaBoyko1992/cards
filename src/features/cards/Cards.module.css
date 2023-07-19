@@ -1,0 +1,31 @@
+.cardsContainer {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.tableTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0 40px 0;
+}
+
+.cardsNotFound {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+}
+
+.backToPacksLink {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.backToPacksLink span {
+    margin-left: 10px;
+}

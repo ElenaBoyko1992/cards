@@ -4,9 +4,9 @@ import { useAppDispatch, useAppSelector } from "common/hooks";
 import { packsThunks } from "features/packs/packs.slice";
 import s from "./Packs.module.css";
 import { useDebounce } from "common/hooks/useDebounce";
-import { createData } from "common/utils/createData";
 import { TableFilters } from "features/packs/TableFilters";
 import { PacksTable } from "features/packs/PacksTable";
+import { createDataForPacksTable } from "common/utils/createData";
 
 export default function BasicTable() {
   console.log("перерисовка BasicTable");
@@ -16,7 +16,7 @@ export default function BasicTable() {
   const searchValue = useAppSelector((state) => state.packs.searchValue);
 
   const rows = packs.map((pack) => {
-    return createData(pack.name, pack.cardsCount, pack.updated, pack.user_name, pack._id, pack.user_id);
+    return createDataForPacksTable(pack.name, pack.cardsCount, pack.updated, pack.user_name, pack._id, pack.user_id);
   });
 
   const debouncedValueForSlider = useDebounce<Array<number>>(valueForSlider, 1000);

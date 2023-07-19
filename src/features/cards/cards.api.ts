@@ -17,7 +17,7 @@ type ArgGetCardsType = {
   page?: number;
   pageCount?: number;
 };
-type CardType = {
+export type CardType = {
   answer: string;
   answerImg: string;
   answerVideo: string;
@@ -37,7 +37,7 @@ type CardType = {
   __v: number;
   _id: string;
 };
-type ReturnGetCardsType = {
+export type ReturnGetCardsType = {
   cards: CardType[];
   cardsTotalCount: number;
   maxGrade: number;
