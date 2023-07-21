@@ -3,11 +3,15 @@
     margin: 0 auto;
 }
 
+.backToPacksBlock {
+    margin-bottom: 20px;
+}
+
 .tableTitle {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 0 40px 0;
+    padding: 0 0 20px 0;
 }
 
 .cardsNotFound {
@@ -28,4 +32,11 @@
 
 .backToPacksLink span {
     margin-left: 10px;
+}
+
+.inputLabelText {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    color: #000000;
+    font-size: 14px;
 }

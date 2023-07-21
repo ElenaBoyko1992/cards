@@ -4,7 +4,7 @@ import Table from "@mui/material/Table";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
-import { SelectChangeEvent, TableSortLabel } from "@mui/material";
+import { InputAdornment, InputLabel, OutlinedInput, Rating, SelectChangeEvent, TableSortLabel } from "@mui/material";
 import TableBody from "@mui/material/TableBody";
 import s from "features/packs/Packs.module.css";
 import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
@@ -13,9 +13,16 @@ import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined
 import { TablePagination } from "components/TablePagination/TablePagination";
 import * as React from "react";
 import { useAppDispatch, useAppSelector } from "common/hooks";
-import { packsThunks, setPage, setRowsPerPage, sortBy } from "features/packs/packs.slice";
+import { packsThunks, setPage, setRowsPerPage, setSearchValue, sortBy } from "features/packs/packs.slice";
 import { NavLink } from "react-router-dom";
-import { cardsThunks, setCardsPage, setRowsCardsPerPage, sortCardsBy } from "features/cards/cards.slice";
+import {
+  cardsThunks,
+  setCardsPage,
+  setRowsCardsPerPage,
+  setSearchCardsValue,
+  sortCardsBy,
+} from "features/cards/cards.slice";
+import SearchIcon from "@mui/icons-material/Search";
 
 export const CardsTable = (props: CardsTablePropsType) => {
   const dispatch = useAppDispatch();
@@ -94,11 +101,11 @@ export const CardsTable = (props: CardsTablePropsType) => {
               </TableCell>
               <TableCell>
                 Grade
-                <TableSortLabel
-                  active={gradeSortIsActive}
-                  direction={orderBy}
-                  onClick={sortByGradeHandler}
-                ></TableSortLabel>
+                {/*<TableSortLabel*/}
+                {/*  active={gradeSortIsActive}*/}
+                {/*  direction={orderBy}*/}
+                {/*  onClick={sortByGradeHandler}*/}
+                {/*></TableSortLabel>*/}
               </TableCell>
               <TableCell> </TableCell>
             </TableRow>
@@ -112,7 +119,9 @@ export const CardsTable = (props: CardsTablePropsType) => {
                 </TableCell>
                 <TableCell>{cardRow.answer}</TableCell>
                 <TableCell>{cardRow.updated}</TableCell>
-                <TableCell>{cardRow.grade}</TableCell>
+                <TableCell>
+                  <Rating name="read-only" value={cardRow.grade} readOnly />
+                </TableCell>
                 {/*<TableCell>*/}
                 {/*  <div className={s.tableSellActions}>*/}
                 {/*    {cardRow.userId === userId ? (*/}

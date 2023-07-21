@@ -5,8 +5,11 @@ import { useDebounce } from "common/hooks/useDebounce";
 import { createDataForCardsTable } from "common/utils/createData";
 import s from "./Cards.module.css";
 import { CardsTable } from "features/cards/CardsTable";
-import { cardsThunks } from "features/cards/cards.slice";
+import { cardsThunks, setSearchCardsValue } from "features/cards/cards.slice";
 import { useParams } from "react-router-dom";
+import { InputAdornment, InputLabel, OutlinedInput } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import { TableCardsFilters } from "features/cards/TableCardsFilters";
 
 export default function BasicCardsTable() {
   console.log("перерисовка BasicCardsTable");
@@ -30,7 +33,7 @@ export default function BasicCardsTable() {
 
   return (
     <>
-      {/*<TableFilters />*/}
+      <TableCardsFilters />
       {cardsRows.length ? (
         <CardsTable cardsRows={cardsRows} packId={packIdForUsing} />
       ) : (

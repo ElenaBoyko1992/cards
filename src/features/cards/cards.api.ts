@@ -1,8 +1,12 @@
 import { instance } from "common/api";
+import { ArgCreatePackType } from "features/packs/packs.api";
 
 export const cardsApi = {
   getCards(payload: ArgGetCardsType) {
     return instance.get<ReturnGetCardsType>("cards/card", { params: payload });
+  },
+  createCard(payload: ArgCreateCardType) {
+    return instance.post("cards/card", { card: payload });
   },
 };
 
@@ -52,4 +56,15 @@ export type ReturnGetCardsType = {
   pageCount: number;
   token: string;
   tokenDeathTime: number;
+};
+export type ArgCreateCardType = {
+  cardsPack_id: string;
+  question?: string;
+  answer?: string;
+  grade?: number;
+  shots?: number;
+  answerImg?: string;
+  questionImg?: string;
+  questionVideo?: string;
+  answerVideo?: string;
 };
