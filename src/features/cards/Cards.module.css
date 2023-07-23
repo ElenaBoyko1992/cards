@@ -40,3 +40,9 @@
     color: #000000;
     font-size: 14px;
 }
+
+.tableSellIcons > * {
+    border: none;
+    background: none;
+    cursor: pointer;
+}

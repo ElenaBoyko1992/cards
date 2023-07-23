@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "common/hooks";
-import { cardsThunks } from "features/cards/cards.slice";
+import { cardsThunks, setCardsPackId } from "features/cards/cards.slice";
 import { NavLink, useParams } from "react-router-dom";
 import { Button } from "@mui/material";
 import BasicCardsTable from "features/cards/BasicCardsTable";
@@ -21,16 +21,20 @@ export const Cards = () => {
       dispatch(cardsThunks.getCards({ packId }));
     }
   };
-  // //поправить, + убрать этот обработчик из кнопки!
-  // const handler = () => {
-  //   if (packId) {
-  //     dispatch(cardsThunks.getCards({ packId }));
-  //   }
-  // };
+  const backToPackListHandler = () => {
+    dispatch(setCardsPackId({ packId: null }));
+  };
+
+  useEffect(() => {
+    if (packId) {
+      dispatch(setCardsPackId({ packId }));
+    }
+  }, [packId]);
+
   return (
     <div className={s.cardsContainer}>
       <div className={s.backToPacksBlock}>
-        <NavLink to={"/packs"} className={s.backToPacksLink}>
+        <NavLink to={"/packs"} className={s.backToPacksLink} onClick={backToPackListHandler}>
           <KeyboardBackspaceIcon />
           <span>Back to Packs List</span>
         </NavLink>

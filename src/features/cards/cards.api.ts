@@ -8,6 +8,9 @@ export const cardsApi = {
   createCard(payload: ArgCreateCardType) {
     return instance.post("cards/card", { card: payload });
   },
+  deleteCard(payload: { id: string }) {
+    return instance.delete("cards/card", { params: payload });
+  },
 };
 
 //types

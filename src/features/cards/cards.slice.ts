@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createAppAsyncThunk, thunkTryCatch } from "common/utils";
 import { ArgCreateCardType, cardsApi, CardType, ReturnGetCardsType } from "features/cards/cards.api";
 import { ArgCreatePackType, packsApi } from "features/packs/packs.api";
+import { setPage } from "features/packs/packs.slice";
 
 const getCards = createAppAsyncThunk<{ cards: ReturnGetCardsType }, { packId: string }>(
   "cards/getCards",
@@ -31,6 +32,17 @@ const createCard = createAppAsyncThunk<void, ArgCreateCardType>("cards/createCar
   });
 });
 
+const deleteCard = createAppAsyncThunk<void, { id: string }>("cards/deleteCard", async (arg, thunkAPI) => {
+  const { pageCards, cardsTotalCount, rowsPerPageCards, cardsItems } = thunkAPI.getState().cards;
+  return thunkTryCatch(thunkAPI, async () => {
+    await cardsApi.deleteCard(arg);
+    const tablePaginationCount = Math.ceil(cardsTotalCount / rowsPerPageCards);
+    if (pageCards === tablePaginationCount && pageCards > 1 && !(cardsItems.length - 1)) {
+      thunkAPI.dispatch(setCardsPage({ pageNumber: pageCards - 1 }));
+    }
+  });
+});
+
 const slice = createSlice({
   name: "cards",
   initialState: {
@@ -48,6 +60,7 @@ const slice = createSlice({
     orderBy: "asc" as "asc" | "desc",
     packName: "",
     packUserId: "",
+    cardsPackId: null as null | string,
   },
   reducers: {
     setCardsPage(state, action: PayloadAction<{ pageNumber: number }>) {
@@ -69,6 +82,9 @@ const slice = createSlice({
     setSearchCardsValue(state, action: PayloadAction<{ searchValue: string }>) {
       state.searchCardsValue = action.payload.searchValue;
     },
+    setCardsPackId(state, action: PayloadAction<{ packId: string | null }>) {
+      state.cardsPackId = action.payload.packId;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getCards.fulfilled, (state, action) => {
@@ -84,8 +100,8 @@ const slice = createSlice({
 });
 
 export const cardsReducer = slice.reducer;
-export const cardsThunks = { getCards, createCard };
-export const { setCardsPage, setRowsCardsPerPage, sortCardsBy, setSearchCardsValue } = slice.actions;
+export const cardsThunks = { getCards, createCard, deleteCard };
+export const { setCardsPage, setRowsCardsPerPage, sortCardsBy, setSearchCardsValue, setCardsPackId } = slice.actions;
 
 //types
 type SortCardsTypeType = "question" | "answer" | "updated" | "grade";

@@ -6,7 +6,7 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import { InputAdornment, InputLabel, OutlinedInput, Rating, SelectChangeEvent, TableSortLabel } from "@mui/material";
 import TableBody from "@mui/material/TableBody";
-import s from "features/packs/Packs.module.css";
+import s from "./Cards.module.css";
 import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
@@ -31,6 +31,8 @@ export const CardsTable = (props: CardsTablePropsType) => {
   const updatedSortIsActive = useAppSelector((state) => state.cards.updatedSortIsActive);
   const gradeSortIsActive = useAppSelector((state) => state.cards.gradeSortIsActive);
   const orderBy = useAppSelector((state) => state.cards.orderBy);
+  const userId = useAppSelector((state) => state.auth.profile?._id);
+  const packUserId = useAppSelector((state) => state.cards.packUserId);
 
   const sortByQuestionHandler = async () => {
     await dispatch(sortCardsBy({ sortType: "question" }));
@@ -52,7 +54,10 @@ export const CardsTable = (props: CardsTablePropsType) => {
     dispatch(cardsThunks.getCards({ packId: props.packId }));
   };
 
-  const deleteCardHandler = async (id: string) => {};
+  const deleteCardHandler = async (id: string) => {
+    await dispatch(cardsThunks.deleteCard({ id }));
+    dispatch(cardsThunks.getCards({ packId: props.packId }));
+  };
 
   //for pagination
   const page = useAppSelector((state) => state.cards.pageCards);
@@ -107,7 +112,7 @@ export const CardsTable = (props: CardsTablePropsType) => {
                 {/*  onClick={sortByGradeHandler}*/}
                 {/*></TableSortLabel>*/}
               </TableCell>
-              <TableCell> </TableCell>
+              {userId === packUserId && <TableCell> </TableCell>}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -122,6 +127,20 @@ export const CardsTable = (props: CardsTablePropsType) => {
                 <TableCell>
                   <Rating name="read-only" value={cardRow.grade} readOnly />
                 </TableCell>
+                {userId === packUserId && (
+                  <TableCell>
+                    <div>
+                      <div className={s.tableSellIcons}>
+                        <button>
+                          <BorderColorOutlinedIcon />
+                        </button>
+                        <button onClick={() => deleteCardHandler(cardRow.cardId)}>
+                          <DeleteOutlineOutlinedIcon />
+                        </button>
+                      </div>
+                    </div>
+                  </TableCell>
+                )}
                 {/*<TableCell>*/}
                 {/*  <div className={s.tableSellActions}>*/}
                 {/*    {cardRow.userId === userId ? (*/}
