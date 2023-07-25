@@ -55,7 +55,7 @@ export const slice = createSlice({
         }
       )
       .addDefaultCase((state, action) => {
-        console.log("addDefaultCase 🚀", action.type);
+        // console.log("addDefaultCase 🚀", action.type);
       });
   },
 });

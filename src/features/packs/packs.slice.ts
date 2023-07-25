@@ -16,7 +16,6 @@ const getPacks = createAppAsyncThunk<{ packs: ReturnGetPacksType }, void>("packs
       max: valueForSlider[1],
     };
     const res = await packsApi.getPacks(arg);
-    console.log(res);
     return { packs: res.data };
   });
 });

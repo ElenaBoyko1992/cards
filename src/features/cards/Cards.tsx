@@ -14,6 +14,7 @@ export const Cards = () => {
   const packName = useAppSelector((state) => state.cards.packName);
   const userId = useAppSelector((state) => state.auth.profile?._id);
   const packUserId = useAppSelector((state) => state.cards.packUserId);
+  const cardsPackId = useAppSelector((state) => state.cards.cardsPackId);
 
   const addNewCardPressHandler = async () => {
     if (packId) {
@@ -21,15 +22,10 @@ export const Cards = () => {
       dispatch(cardsThunks.getCards({ packId }));
     }
   };
+
   const backToPackListHandler = () => {
     dispatch(setCardsPackId({ packId: null }));
   };
-
-  useEffect(() => {
-    if (packId) {
-      dispatch(setCardsPackId({ packId }));
-    }
-  }, [packId]);
 
   return (
     <div className={s.cardsContainer}>

@@ -8,6 +8,7 @@ import { authThunks } from "features/auth/auth.slice";
 import { Navigate, useNavigate } from "react-router-dom";
 
 export const Packs = () => {
+  console.log("перерисовка Packs");
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const cardsPackId = useAppSelector((state) => state.cards.cardsPackId);
