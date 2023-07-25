@@ -14,8 +14,8 @@ import { TableCardsFilters } from "features/cards/TableCardsFilters";
 export default function BasicCardsTable() {
   console.log("перерисовка BasicCardsTable");
   const { packId } = useParams();
-  const packIdForUsing = packId ? packId : "";
-
+  const packIdForUsing = useMemo(() => (packId ? packId : ""), [packId]);
+  const cardsPackId = useAppSelector((state) => state.cards.cardsPackId);
   const dispatch = useAppDispatch();
 
   const searchCardsValue = useAppSelector((state) => state.cards.searchCardsValue);
@@ -27,11 +27,15 @@ export default function BasicCardsTable() {
 
   const debouncedSearchCardsValue = useDebounce<string>(searchCardsValue, 1000);
   useEffect(() => {
-    if (packId) {
+    if (packId && packIdForUsing !== cardsPackId) {
+      debugger;
       dispatch(setCardsPackId({ packId }));
     }
+    console.log(packId && packIdForUsing !== cardsPackId);
+    console.log(cardsPackId);
+    console.log(packIdForUsing);
     // из-за этого двойная перерисовка кардсов!
-    //debugger;
+    debugger;
     dispatch(cardsThunks.getCards({ packId: packIdForUsing }));
   }, [debouncedSearchCardsValue, packId, packIdForUsing]);
 

@@ -23,7 +23,6 @@ export default function BasicTable() {
   const debouncedSearchValue = useDebounce<string>(searchValue, 1000);
 
   useEffect(() => {
-    debugger;
     dispatch(packsThunks.getPacks());
   }, [debouncedValueForSlider, debouncedSearchValue]);
 
