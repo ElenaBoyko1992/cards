@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "common/hooks";
-import { cardsThunks, setCardsPackId } from "features/cards/cards.slice";
+import { cardsThunks, cleanPacks, setCardsPackId } from "features/cards/cards.slice";
 import { NavLink, useParams } from "react-router-dom";
 import { Button } from "@mui/material";
 import BasicCardsTable from "features/cards/BasicCardsTable";
@@ -25,6 +25,7 @@ export const Cards = () => {
 
   const backToPackListHandler = () => {
     dispatch(setCardsPackId({ packId: null }));
+    dispatch(cleanPacks());
   };
 
   return (

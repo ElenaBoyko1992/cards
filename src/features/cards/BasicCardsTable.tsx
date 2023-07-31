@@ -5,10 +5,8 @@ import { useDebounce } from "common/hooks/useDebounce";
 import { createDataForCardsTable } from "common/utils/createData";
 import s from "./Cards.module.css";
 import { CardsTable } from "features/cards/CardsTable";
-import { cardsThunks, setCardsPackId, setSearchCardsValue } from "features/cards/cards.slice";
+import { cardsThunks, setCardsPackId } from "features/cards/cards.slice";
 import { useParams } from "react-router-dom";
-import { InputAdornment, InputLabel, OutlinedInput } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import { TableCardsFilters } from "features/cards/TableCardsFilters";
 
 export default function BasicCardsTable() {
@@ -26,16 +24,11 @@ export default function BasicCardsTable() {
   });
 
   const debouncedSearchCardsValue = useDebounce<string>(searchCardsValue, 1000);
+
   useEffect(() => {
     if (packId && packIdForUsing !== cardsPackId) {
-      debugger;
       dispatch(setCardsPackId({ packId }));
     }
-    console.log(packId && packIdForUsing !== cardsPackId);
-    console.log(cardsPackId);
-    console.log(packIdForUsing);
-    // из-за этого двойная перерисовка кардсов!
-    debugger;
     dispatch(cardsThunks.getCards({ packId: packIdForUsing }));
   }, [debouncedSearchCardsValue, packId, packIdForUsing]);
 

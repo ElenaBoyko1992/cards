@@ -85,6 +85,9 @@ const slice = createSlice({
     setCardsPackId(state, action: PayloadAction<{ packId: string | null }>) {
       state.cardsPackId = action.payload.packId;
     },
+    cleanPacks(state, action: PayloadAction<void>) {
+      state.cardsItems = [];
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getCards.fulfilled, (state, action) => {
@@ -101,7 +104,8 @@ const slice = createSlice({
 
 export const cardsReducer = slice.reducer;
 export const cardsThunks = { getCards, createCard, deleteCard };
-export const { setCardsPage, setRowsCardsPerPage, sortCardsBy, setSearchCardsValue, setCardsPackId } = slice.actions;
+export const { setCardsPage, setRowsCardsPerPage, sortCardsBy, setSearchCardsValue, setCardsPackId, cleanPacks } =
+  slice.actions;
 
 //types
 type SortCardsTypeType = "question" | "answer" | "updated" | "grade";
