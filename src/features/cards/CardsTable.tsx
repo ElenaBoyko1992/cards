@@ -4,25 +4,28 @@ import Table from "@mui/material/Table";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
-import { InputAdornment, InputLabel, OutlinedInput, Rating, SelectChangeEvent, TableSortLabel } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Rating,
+  SelectChangeEvent,
+  TableSortLabel,
+  TextField,
+} from "@mui/material";
 import TableBody from "@mui/material/TableBody";
 import s from "./Cards.module.css";
-import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { TablePagination } from "components/TablePagination/TablePagination";
 import * as React from "react";
+import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "common/hooks";
-import { packsThunks, setPage, setRowsPerPage, setSearchValue, sortBy } from "features/packs/packs.slice";
-import { NavLink } from "react-router-dom";
-import {
-  cardsThunks,
-  setCardsPage,
-  setRowsCardsPerPage,
-  setSearchCardsValue,
-  sortCardsBy,
-} from "features/cards/cards.slice";
-import SearchIcon from "@mui/icons-material/Search";
+import { cardsThunks, setCardsPage, setRowsCardsPerPage, sortCardsBy } from "features/cards/cards.slice";
+import { FormikProvider, FormikState, useFormik } from "formik";
 
 export const CardsTable = (props: CardsTablePropsType) => {
   const dispatch = useAppDispatch();
@@ -33,6 +36,24 @@ export const CardsTable = (props: CardsTablePropsType) => {
   const orderBy = useAppSelector((state) => state.cards.orderBy);
   const userId = useAppSelector((state) => state.auth.profile?._id);
   const packUserId = useAppSelector((state) => state.cards.packUserId);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [idForDeleteCard, setIdForDeleteCard] = useState("");
+  const [cardName, setCardName] = useState("");
+  const [idForEditCard, setIdForEditCard] = useState("");
+
+  //test
+  const [startingValuesForOpenEditForm, setStartingValuesForOpenEditForm] = useState<any>({});
+  //****
+
+  const handleClickOpenDeleteDialog = (id: string, name: string) => {
+    setOpenDeleteDialog(true);
+    setIdForDeleteCard(id);
+    setCardName(name);
+  };
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+    setIdForDeleteCard("");
+  };
 
   const sortByQuestionHandler = async () => {
     await dispatch(sortCardsBy({ sortType: "question" }));
@@ -54,9 +75,10 @@ export const CardsTable = (props: CardsTablePropsType) => {
     dispatch(cardsThunks.getCards({ packId: props.packId }));
   };
 
-  const deleteCardHandler = async (id: string) => {
-    await dispatch(cardsThunks.deleteCard({ id }));
+  const deleteCardHandler = async () => {
+    await dispatch(cardsThunks.deleteCard({ id: idForDeleteCard }));
     dispatch(cardsThunks.getCards({ packId: props.packId }));
+    setOpenDeleteDialog(false);
   };
 
   //for pagination
@@ -73,6 +95,54 @@ export const CardsTable = (props: CardsTablePropsType) => {
     await dispatch(setCardsPage({ pageNumber: page }));
     dispatch(cardsThunks.getCards({ packId: props.packId }));
   };
+
+  //editCardModal
+
+  const [openEditModal, setOpenEditModal] = useState(false);
+
+  const handleClickEditModalOpen = (id: string, question: string, answer: string) => {
+    setStartingValuesForOpenEditForm({ question, answer });
+    console.log(startingValuesForOpenEditForm);
+    setIdForEditCard(id);
+    setTimeout(() => {
+      setOpenEditModal(true);
+    }, 0);
+  };
+
+  const handleEditModalClose = (res: any) => {
+    setOpenEditModal(false);
+    console.log(res);
+  };
+  const formik = useFormik({
+    validate: (values) => {
+      if (!values.question) {
+        return {
+          question: "Question is required",
+        };
+      }
+      if (!values.answer) {
+        return {
+          answer: "Answer is required",
+        };
+      }
+    },
+    initialValues: {
+      question: startingValuesForOpenEditForm.question ? startingValuesForOpenEditForm.question : "",
+      answer: startingValuesForOpenEditForm.answer ? startingValuesForOpenEditForm.answer : "",
+    },
+    values: {
+      question: startingValuesForOpenEditForm.question ? startingValuesForOpenEditForm.question : "",
+      answer: startingValuesForOpenEditForm.answer ? startingValuesForOpenEditForm.answer : "",
+    },
+    onSubmit: async (values, formikHelpers) => {
+      console.log(values);
+      const valuesForThunk = { ...values, _id: idForEditCard };
+      await dispatch(cardsThunks.editCard(valuesForThunk));
+      dispatch(cardsThunks.getCards({ packId: props.packId }));
+      formikHelpers.resetForm();
+      setOpenEditModal(false);
+    },
+  });
 
   return (
     <div>
@@ -131,10 +201,12 @@ export const CardsTable = (props: CardsTablePropsType) => {
                   <TableCell>
                     <div>
                       <div className={s.tableSellIcons}>
-                        <button>
+                        <button
+                          onClick={() => handleClickEditModalOpen(cardRow.cardId, cardRow.question, cardRow.answer)}
+                        >
                           <BorderColorOutlinedIcon />
                         </button>
-                        <button onClick={() => deleteCardHandler(cardRow.cardId)}>
+                        <button onClick={() => handleClickOpenDeleteDialog(cardRow.cardId, cardRow.question)}>
                           <DeleteOutlineOutlinedIcon />
                         </button>
                       </div>
@@ -176,6 +248,47 @@ export const CardsTable = (props: CardsTablePropsType) => {
         page={page}
         rowsPerPage={rowsPerPage}
       />
+      <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
+        <DialogTitle>{"Delete Card"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>{`Do you really want to remove card '${cardName}'?`}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="outlined" onClick={handleCloseDeleteDialog}>
+            Cancel
+          </Button>
+          <Button variant="contained" color="error" onClick={deleteCardHandler} autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/*editCard modal*/}
+      <div>
+        <Dialog open={openEditModal} onClose={handleEditModalClose}>
+          <DialogTitle>Add new card</DialogTitle>
+          <FormikProvider value={formik}>
+            <form action="" onSubmit={formik.handleSubmit} className={s.form}>
+              <TextField variant="standard" {...formik.getFieldProps("question")} label={"Question"} margin="normal" />
+              {/*{formik.touched.question && formik.errors.question ? (*/}
+              {/*    <div className={s.formError}>{formik.errors.question}</div>*/}
+              {/*) : null}*/}
+              <TextField variant="standard" {...formik.getFieldProps("answer")} label={"Answer"} margin="normal" />
+              {/*{formik.touched.answer && formik.errors.answer ? (*/}
+              {/*    <div className={s.formError}>{formik.errors.answer}</div>*/}
+              {/*) : null}*/}
+            </form>
+          </FormikProvider>
+          <DialogActions>
+            <Button onClick={handleEditModalClose} variant="outlined">
+              Cancel
+            </Button>
+            <Button onClick={formik.submitForm} variant="contained">
+              Edit card
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
     </div>
   );
 };

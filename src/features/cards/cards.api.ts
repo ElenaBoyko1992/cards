@@ -11,6 +11,9 @@ export const cardsApi = {
   deleteCard(payload: { id: string }) {
     return instance.delete("cards/card", { params: payload });
   },
+  editCard(payload: ArgEditCardType) {
+    return instance.put("cards/card", { card: payload });
+  },
 };
 
 //types
@@ -70,4 +73,9 @@ export type ArgCreateCardType = {
   questionImg?: string;
   questionVideo?: string;
   answerVideo?: string;
+};
+export type ArgEditCardType = {
+  _id: string;
+  question?: string;
+  answer?: string;
 };

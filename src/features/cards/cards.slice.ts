@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createAppAsyncThunk, thunkTryCatch } from "common/utils";
-import { ArgCreateCardType, cardsApi, CardType, ReturnGetCardsType } from "features/cards/cards.api";
+import { ArgCreateCardType, ArgEditCardType, cardsApi, CardType, ReturnGetCardsType } from "features/cards/cards.api";
 import { ArgCreatePackType, packsApi } from "features/packs/packs.api";
 import { setPage } from "features/packs/packs.slice";
 
@@ -40,6 +40,13 @@ const deleteCard = createAppAsyncThunk<void, { id: string }>("cards/deleteCard",
     if (pageCards === tablePaginationCount && pageCards > 1 && !(cardsItems.length - 1)) {
       thunkAPI.dispatch(setCardsPage({ pageNumber: pageCards - 1 }));
     }
+  });
+});
+
+const editCard = createAppAsyncThunk<void, ArgEditCardType>("cards/editCard", async (arg, thunkAPI) => {
+  return thunkTryCatch(thunkAPI, async () => {
+    await cardsApi.editCard(arg);
+    return;
   });
 });
 
@@ -103,7 +110,7 @@ const slice = createSlice({
 });
 
 export const cardsReducer = slice.reducer;
-export const cardsThunks = { getCards, createCard, deleteCard };
+export const cardsThunks = { getCards, createCard, deleteCard, editCard };
 export const { setCardsPage, setRowsCardsPerPage, sortCardsBy, setSearchCardsValue, setCardsPackId, cleanPacks } =
   slice.actions;
 
