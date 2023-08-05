@@ -11,8 +11,8 @@ import { TableCardsFilters } from "features/cards/TableCardsFilters";
 
 export default function BasicCardsTable() {
   console.log("перерисовка BasicCardsTable");
-  const { packId } = useParams();
-  const packIdForUsing = useMemo(() => (packId ? packId : ""), [packId]);
+  // const { packId } = useParams();
+  // const packIdForUsing = useMemo(() => (packId ? packId : ""), [packId]);
   const cardsPackId = useAppSelector((state) => state.cards.cardsPackId);
   const dispatch = useAppDispatch();
 
