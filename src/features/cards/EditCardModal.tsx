@@ -11,7 +11,7 @@ export const EditCardModal = (props: EditCardModalType) => {
   return (
     <div>
       <Dialog open={props.openEditModal} onClose={handleEditModalClose}>
-        <DialogTitle>Add new card</DialogTitle>
+        <DialogTitle>Edit card</DialogTitle>
         <FormikProvider value={props.formik}>
           <form action="" onSubmit={props.formik.handleSubmit} className={s.form}>
             <TextField

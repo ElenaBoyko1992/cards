@@ -68,7 +68,7 @@ export const Cards = () => {
           </Button>
         )}
       </div>
-      <BasicCardsTable />
+      <BasicCardsTable packIdForUsing={packIdForUsing} />
       <AddCardModal
         setOpenAddCardModal={setOpenAddCardModal}
         openAddCardModal={openAddCardModal}

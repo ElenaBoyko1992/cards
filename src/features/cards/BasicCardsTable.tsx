@@ -1,15 +1,14 @@
 import * as React from "react";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "common/hooks";
 import { useDebounce } from "common/hooks/useDebounce";
 import { createDataForCardsTable } from "common/utils/createData";
 import s from "./Cards.module.css";
 import { CardsTable } from "features/cards/CardsTable";
 import { cardsThunks, setCardsPackId } from "features/cards/cards.slice";
-import { useParams } from "react-router-dom";
 import { TableCardsFilters } from "features/cards/TableCardsFilters";
 
-export default function BasicCardsTable() {
+export default function BasicCardsTable(props: BasicCardsTableType) {
   console.log("перерисовка BasicCardsTable");
   // const { packId } = useParams();
   // const packIdForUsing = useMemo(() => (packId ? packId : ""), [packId]);
@@ -26,20 +25,25 @@ export default function BasicCardsTable() {
   const debouncedSearchCardsValue = useDebounce<string>(searchCardsValue, 1000);
 
   useEffect(() => {
-    if (packId && packIdForUsing !== cardsPackId) {
-      dispatch(setCardsPackId({ packId }));
+    if (props.packIdForUsing && props.packIdForUsing !== cardsPackId) {
+      dispatch(setCardsPackId({ packId: props.packIdForUsing }));
     }
-    dispatch(cardsThunks.getCards({ packId: packIdForUsing }));
-  }, [debouncedSearchCardsValue, packId, packIdForUsing]);
+    dispatch(cardsThunks.getCards({ packId: props.packIdForUsing }));
+  }, [debouncedSearchCardsValue, props.packIdForUsing]);
 
   return (
     <>
       <TableCardsFilters />
       {cardsRows.length ? (
-        <CardsTable cardsRows={cardsRows} packId={packIdForUsing} />
+        <CardsTable cardsRows={cardsRows} packId={props.packIdForUsing} />
       ) : (
         <div className={s.cardsNotFound}>В этой колоде нет карточек.</div>
       )}
     </>
   );
 }
+
+//types
+type BasicCardsTableType = {
+  packIdForUsing: string;
+};
