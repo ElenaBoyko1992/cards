@@ -8,8 +8,7 @@ import { TableFilters } from "features/packs/TableFilters";
 import { PacksTable } from "features/packs/PacksTable";
 import { createDataForPacksTable } from "common/utils/createData";
 
-export default function BasicTable() {
-  console.log("перерисовка BasicTable");
+export default function BasicPackTable() {
   const dispatch = useAppDispatch();
   const packs = useAppSelector((state) => state.packs.packsItems);
   const valueForSlider = useAppSelector((state) => state.packs.valueForSlider);

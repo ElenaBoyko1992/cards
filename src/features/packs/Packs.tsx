@@ -1,21 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "@mui/material";
 import s from "./Packs.module.css";
-import BasicTable from "features/packs/BasicTable";
+import BasicPackTable from "features/packs/BasicPackTable";
 import { useAppDispatch, useAppSelector } from "common/hooks";
-import { packsThunks } from "features/packs/packs.slice";
-import { authThunks } from "features/auth/auth.slice";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import { AddPackModal } from "features/packs/AddPackModal";
 
 export const Packs = () => {
-  console.log("перерисовка Packs");
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  const [openAddPackModal, setOpenAddPackModal] = useState(false);
   const cardsPackId = useAppSelector((state) => state.cards.cardsPackId);
 
-  const addNewPackPressHandler = async () => {
-    await dispatch(packsThunks.createPack({}));
-    dispatch(packsThunks.getPacks());
+  const handleClickAddPackModalOpen = () => {
+    setOpenAddPackModal(true);
   };
 
   return (
@@ -36,15 +32,15 @@ export const Packs = () => {
                 fontSize: "16px",
                 padding: "8px 28px",
               }}
-              onClick={addNewPackPressHandler}
+              onClick={handleClickAddPackModalOpen}
             >
               Add new pack
             </Button>
           </div>
-
           {/*<EnhancedTable /> - old component*/}
           {/*<DataGridTable /> - old component*/}
-          <BasicTable />
+          <BasicPackTable />
+          <AddPackModal openAddPackModal={openAddPackModal} setOpenAddPackModal={setOpenAddPackModal} />
         </div>
       )}
     </>

@@ -22,7 +22,7 @@ export const Cards = () => {
     dispatch(cleanPacks());
   };
 
-  const handleClickAddModalOpen = () => {
+  const handleClickAddCardModalOpen = () => {
     setOpenAddCardModal(true);
   };
 
@@ -47,7 +47,7 @@ export const Cards = () => {
               fontSize: "16px",
               padding: "8px 28px",
             }}
-            onClick={handleClickAddModalOpen}
+            onClick={handleClickAddCardModalOpen}
           >
             Add new card
           </Button>

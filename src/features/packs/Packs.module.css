@@ -92,3 +92,15 @@
     justify-content: center;
     height: 200px;
 }
+
+.form {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    margin: 0px 20px 20px;
+}
+
+.formError {
+    font-size: 14px;
+    color: #ff0000ff;
+}

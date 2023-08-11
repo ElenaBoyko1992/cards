@@ -9,12 +9,9 @@ import { cardsThunks, setCardsPackId } from "features/cards/cards.slice";
 import { TableCardsFilters } from "features/cards/TableCardsFilters";
 
 export default function BasicCardsTable(props: BasicCardsTableType) {
-  console.log("перерисовка BasicCardsTable");
-  // const { packId } = useParams();
-  // const packIdForUsing = useMemo(() => (packId ? packId : ""), [packId]);
-  const cardsPackId = useAppSelector((state) => state.cards.cardsPackId);
   const dispatch = useAppDispatch();
 
+  const cardsPackId = useAppSelector((state) => state.cards.cardsPackId);
   const searchCardsValue = useAppSelector((state) => state.cards.searchCardsValue);
   const cards = useAppSelector((state) => state.cards.cardsItems);
 

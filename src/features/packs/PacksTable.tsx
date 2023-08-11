@@ -15,6 +15,8 @@ import * as React from "react";
 import { useAppDispatch, useAppSelector } from "common/hooks";
 import { packsThunks, setPage, setRowsPerPage, sortBy } from "features/packs/packs.slice";
 import { NavLink } from "react-router-dom";
+import { DeletePackModal } from "features/packs/DeletePackModal";
+import { useState } from "react";
 
 export const PacksTable = (props: PacksTablePropsType) => {
   const dispatch = useAppDispatch();
@@ -24,6 +26,10 @@ export const PacksTable = (props: PacksTablePropsType) => {
   const cardsCountSortIsActive = useAppSelector((state) => state.packs.cardsCountSortIsActive);
   const lastUpdatedSortIsActive = useAppSelector((state) => state.packs.lastUpdatedSortIsActive);
   const createdSortIsActive = useAppSelector((state) => state.packs.createdSortIsActive);
+  const packName = useAppSelector((state) => state.cards.packName);
+
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [idForDeletePack, setIdForDeletePack] = useState("");
 
   const sortByNameHandler = async () => {
     await dispatch(sortBy({ sortType: "name" }));
@@ -45,10 +51,15 @@ export const PacksTable = (props: PacksTablePropsType) => {
     dispatch(packsThunks.getPacks());
   };
 
-  const deletePackHandler = async (id: string) => {
-    await dispatch(packsThunks.deletePack({ id }));
-    dispatch(packsThunks.getPacks());
+  const handleClickOpenDeletePackModal = (id: string) => {
+    setOpenDeleteDialog(true);
+    setIdForDeletePack(id);
   };
+
+  // const deletePackHandler = async (id: string) => {
+  //   // await dispatch(packsThunks.deletePack({ id }));
+  //   // dispatch(packsThunks.getPacks());
+  // };
 
   //for pagination
   const page = useAppSelector((state) => state.packs.page);
@@ -125,7 +136,7 @@ export const PacksTable = (props: PacksTablePropsType) => {
                         <button>
                           <BorderColorOutlinedIcon />
                         </button>
-                        <button onClick={() => deletePackHandler(row.packId)}>
+                        <button onClick={() => handleClickOpenDeletePackModal(row.packId)}>
                           <DeleteOutlineOutlinedIcon />
                         </button>
                       </div>
@@ -149,6 +160,13 @@ export const PacksTable = (props: PacksTablePropsType) => {
         handleChangeRowsPerPage={handleChangeRowsPerPage}
         page={page}
         rowsPerPage={rowsPerPage}
+      />
+      <DeletePackModal
+        setOpenDeleteDialog={setOpenDeleteDialog}
+        openDeleteDialog={openDeleteDialog}
+        packName={packName}
+        setIdForDeletePack={setIdForDeletePack}
+        idForDeletePack={idForDeletePack}
       />
     </div>
   );
