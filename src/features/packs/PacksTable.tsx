@@ -17,6 +17,9 @@ import { packsThunks, setPage, setRowsPerPage, sortBy } from "features/packs/pac
 import { NavLink } from "react-router-dom";
 import { DeletePackModal } from "features/packs/DeletePackModal";
 import { useState } from "react";
+import { useFormik } from "formik";
+import { cardsThunks } from "features/cards/cards.slice";
+import { EditPackModal } from "features/packs/EditPackModal";
 
 export const PacksTable = (props: PacksTablePropsType) => {
   const dispatch = useAppDispatch();
@@ -30,6 +33,8 @@ export const PacksTable = (props: PacksTablePropsType) => {
 
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [idForDeletePack, setIdForDeletePack] = useState("");
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [idForEditPack, setIdForEditPack] = useState("");
 
   const sortByNameHandler = async () => {
     await dispatch(sortBy({ sortType: "name" }));
@@ -51,16 +56,15 @@ export const PacksTable = (props: PacksTablePropsType) => {
     dispatch(packsThunks.getPacks());
   };
 
-  const handleClickOpenDeletePackModal = (id: string) => {
+  const handleClickOpenDeletePackModal = (packId: string) => {
     setOpenDeleteDialog(true);
-    setIdForDeletePack(id);
+    setIdForDeletePack(packId);
   };
 
-  // const deletePackHandler = async (id: string) => {
-  //   // await dispatch(packsThunks.deletePack({ id }));
-  //   // dispatch(packsThunks.getPacks());
-  // };
-
+  const handleClickOpenEditPackModal = (packId: string) => {
+    setOpenEditDialog(true);
+    setIdForEditPack(packId);
+  };
   //for pagination
   const page = useAppSelector((state) => state.packs.page);
   const rowsPerPage = useAppSelector((state) => state.packs.rowsPerPage);
@@ -75,6 +79,20 @@ export const PacksTable = (props: PacksTablePropsType) => {
     await dispatch(setPage({ pageNumber: page }));
     dispatch(packsThunks.getPacks());
   };
+
+  const formik = useFormik({
+    validate: (values) => {},
+    initialValues: {
+      namePack: "",
+    },
+    onSubmit: async (values, formikHelpers) => {
+      const valuesForThunk = { name: values.namePack, _id: idForEditPack };
+      await dispatch(packsThunks.editPack(valuesForThunk));
+      dispatch(packsThunks.getPacks());
+      formikHelpers.resetForm();
+      setOpenEditDialog(false);
+    },
+  });
 
   return (
     <div>
@@ -133,7 +151,7 @@ export const PacksTable = (props: PacksTablePropsType) => {
                         <button disabled={!row.cardsCount}>
                           <SchoolOutlinedIcon />
                         </button>
-                        <button>
+                        <button onClick={() => handleClickOpenEditPackModal(row.packId)}>
                           <BorderColorOutlinedIcon />
                         </button>
                         <button onClick={() => handleClickOpenDeletePackModal(row.packId)}>
@@ -168,6 +186,7 @@ export const PacksTable = (props: PacksTablePropsType) => {
         setIdForDeletePack={setIdForDeletePack}
         idForDeletePack={idForDeletePack}
       />
+      <EditPackModal setOpenEditModal={setOpenEditDialog} openEditModal={openEditDialog} formik={formik} />
     </div>
   );
 };

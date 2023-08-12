@@ -24,7 +24,6 @@ export const CardsTable = (props: CardsTablePropsType) => {
       answer: "",
     },
     onSubmit: async (values, formikHelpers) => {
-      console.log(values);
       const valuesForThunk = { ...values, _id: idForEditCard };
       await dispatch(cardsThunks.editCard(valuesForThunk));
       dispatch(cardsThunks.getCards({ packId: props.packId }));

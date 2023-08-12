@@ -10,6 +10,9 @@ export const packsApi = {
   deletePack(payload: { id: string }) {
     return instance.delete("cards/pack", { params: payload });
   },
+  editPack(payload: ArgEditPackType) {
+    return instance.put("cards/pack", { cardsPack: payload });
+  },
 };
 
 //types
@@ -54,4 +57,8 @@ export type ArgCreatePackType = {
   name?: string;
   deckCover?: string;
   private?: boolean;
+};
+export type ArgEditPackType = {
+  name?: string;
+  _id: string;
 };

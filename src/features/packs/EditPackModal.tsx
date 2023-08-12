@@ -3,7 +3,7 @@ import { Button, Dialog, DialogActions, DialogTitle, TextField } from "@mui/mate
 import { FormikContextType, FormikProvider } from "formik";
 import s from "features/cards/Cards.module.css";
 
-export const EditCardModal = (props: EditCardModalType) => {
+export const EditPackModal = (props: EditPackModalType) => {
   const handleEditModalClose = (res: any) => {
     props.setOpenEditModal(false);
   };
@@ -11,16 +11,15 @@ export const EditCardModal = (props: EditCardModalType) => {
   return (
     <div>
       <Dialog open={props.openEditModal} onClose={handleEditModalClose}>
-        <DialogTitle>Edit card</DialogTitle>
+        <DialogTitle>Edit pack</DialogTitle>
         <FormikProvider value={props.formik}>
           <form action="" onSubmit={props.formik.handleSubmit} className={s.form}>
             <TextField
               variant="standard"
-              {...props.formik.getFieldProps("question")}
-              label={"Question"}
+              {...props.formik.getFieldProps("namePack")}
+              label={"Name pack"}
               margin="normal"
             />
-            <TextField variant="standard" {...props.formik.getFieldProps("answer")} label={"Answer"} margin="normal" />
           </form>
         </FormikProvider>
         <DialogActions>
@@ -28,7 +27,7 @@ export const EditCardModal = (props: EditCardModalType) => {
             Cancel
           </Button>
           <Button onClick={props.formik.submitForm} variant="contained">
-            Edit card
+            Save
           </Button>
         </DialogActions>
       </Dialog>
@@ -37,7 +36,7 @@ export const EditCardModal = (props: EditCardModalType) => {
 };
 
 //types
-type EditCardModalType = {
+type EditPackModalType = {
   openEditModal: boolean;
   setOpenEditModal: (open: boolean) => void;
   formik: FormikContextType<any>;

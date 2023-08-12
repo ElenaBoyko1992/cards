@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createAppAsyncThunk, thunkTryCatch } from "common/utils";
-import { ArgCreatePackType, packsApi, PacksType, ReturnGetPacksType } from "features/packs/packs.api";
+import { ArgCreatePackType, ArgEditPackType, packsApi, PacksType, ReturnGetPacksType } from "features/packs/packs.api";
+import { ArgEditCardType, cardsApi } from "features/cards/cards.api";
 
 const getPacks = createAppAsyncThunk<{ packs: ReturnGetPacksType }, void>("packs/getPacks", async (arg, thunkAPI) => {
   return thunkTryCatch(thunkAPI, async () => {
@@ -45,6 +46,13 @@ const deletePack = createAppAsyncThunk<void, { id: string }>("packs/deletePack",
     if (page === tablePaginationCount && page > 1 && !(packsItems.length - 1)) {
       thunkAPI.dispatch(setPage({ pageNumber: page - 1 }));
     }
+  });
+});
+
+const editPack = createAppAsyncThunk<void, ArgEditPackType>("packs/editPack", async (arg, thunkAPI) => {
+  return thunkTryCatch(thunkAPI, async () => {
+    await packsApi.editPack(arg);
+    return;
   });
 });
 
@@ -124,7 +132,7 @@ const slice = createSlice({
 });
 
 export const packsReducer = slice.reducer;
-export const packsThunks = { getPacks, createPack, deletePack };
+export const packsThunks = { getPacks, createPack, deletePack, editPack };
 export const {
   setPage,
   setRowsPerPage,
