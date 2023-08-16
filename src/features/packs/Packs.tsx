@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button } from "@mui/material";
 import s from "./Packs.module.css";
 import BasicPackTable from "features/packs/BasicPackTable";
-import { useAppDispatch, useAppSelector } from "common/hooks";
+import { useAppSelector } from "common/hooks";
 import { Navigate } from "react-router-dom";
 import { AddPackModal } from "features/packs/AddPackModal";
 
@@ -16,6 +16,7 @@ export const Packs = () => {
 
   return (
     <>
+      {/*для перезагрузки. Если в стейте есть cardsPackId, заначит перенаправление на страницу кардсов*/}
       {cardsPackId ? (
         <Navigate to={`/cards/${cardsPackId}`} />
       ) : (
@@ -37,8 +38,6 @@ export const Packs = () => {
               Add new pack
             </Button>
           </div>
-          {/*<EnhancedTable /> - old component*/}
-          {/*<DataGridTable /> - old component*/}
           <BasicPackTable />
           <AddPackModal openAddPackModal={openAddPackModal} setOpenAddPackModal={setOpenAddPackModal} />
         </div>

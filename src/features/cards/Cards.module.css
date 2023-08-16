@@ -48,10 +48,6 @@
 
 }
 
-.modalAddCard {
-
-}
-
 .form {
     display: flex;
     flex-direction: column;
@@ -62,4 +58,12 @@
 .formError {
     font-size: 14px;
     color: #ff0000ff;
+}
+
+.actionButtons {
+    display: flex;
+}
+
+.actionButtons button {
+    margin-left: 10px;
 }

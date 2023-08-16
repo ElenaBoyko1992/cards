@@ -1,0 +1,32 @@
+.studyCardsContainer {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.studyCardsWrapper {
+    display: flex;
+    flex-direction: column;
+    padding-top: 40px;
+}
+
+.studyCardsWrapper h1 {
+    text-align: center;
+}
+
+.paper {
+    width: 439px;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+.question, .answer, .radioGroup {
+    margin-bottom: 30px;
+}
+
+.showTheAnswerBlock {
+    transition: all 1s ease;
+}
+
+
+
+

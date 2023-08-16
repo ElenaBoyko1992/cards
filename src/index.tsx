@@ -16,6 +16,7 @@ import App from "App";
 import { CheckEmail } from "features/auth/forgotPassword/CheckEmail";
 import { Packs } from "features/packs/Packs";
 import { Cards } from "features/cards/Cards";
+import { StudyCards } from "features/cards/studyCards/StudyCards";
 
 const router = createHashRouter([
   {
@@ -49,6 +50,10 @@ const router = createHashRouter([
       {
         path: "/cards/:packId",
         element: <Cards />,
+      },
+      {
+        path: "/cards/:packId/studyСards",
+        element: <StudyCards />,
       },
     ],
   },

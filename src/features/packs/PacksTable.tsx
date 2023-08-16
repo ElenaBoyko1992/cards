@@ -12,13 +12,12 @@ import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { TablePagination } from "components/TablePagination/TablePagination";
 import * as React from "react";
+import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "common/hooks";
 import { packsThunks, setPage, setRowsPerPage, sortBy } from "features/packs/packs.slice";
 import { NavLink } from "react-router-dom";
 import { DeletePackModal } from "features/packs/DeletePackModal";
-import { useState } from "react";
 import { useFormik } from "formik";
-import { cardsThunks } from "features/cards/cards.slice";
 import { EditPackModal } from "features/packs/EditPackModal";
 
 export const PacksTable = (props: PacksTablePropsType) => {
